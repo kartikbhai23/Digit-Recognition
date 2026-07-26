@@ -1,0 +1,13 @@
+# Python / PyTorch
+__pycache__/
+*.pyc
+.venv/
+env/
+venv/
+checkpoints/
+data/
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/

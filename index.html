@@ -1,0 +1,1718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Neural Digit Recognizer | Interactive MNIST Classifier</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-dark: #070913;
+            --card-bg: rgba(18, 22, 41, 0.65);
+            --card-border: rgba(255, 255, 255, 0.12);
+            --primary: #00f2fe;
+            --primary-glow: rgba(0, 242, 254, 0.4);
+            --secondary: #9d4edd;
+            --secondary-glow: rgba(157, 78, 221, 0.4);
+            --accent: #4facfe;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --radius-lg: 20px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Background Canvas */
+        #bgCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* App Container */
+        .app-wrapper {
+            position: relative;
+            z-index: 1;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 20px 24px 40px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Header Navigation */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 28px;
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: #fff;
+            box-shadow: 0 0 20px var(--primary-glow);
+            animation: pulseGlow 3s infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 15px var(--primary-glow); }
+            100% { box-shadow: 0 0 30px var(--secondary-glow); }
+        }
+
+        .brand-title h1 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 0.5px;
+        }
+
+        .brand-title p {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .header-badges {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .badge-status {
+            color: var(--success);
+            border-color: rgba(16, 185, 129, 0.3);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .badge-status.offline {
+            color: var(--warning);
+            border-color: rgba(245, 158, 11, 0.3);
+            background: rgba(245, 158, 11, 0.1);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: currentColor;
+            box-shadow: 0 0 8px currentColor;
+        }
+
+        /* Banner Instructions */
+        .instruction-banner {
+            background: linear-gradient(90deg, rgba(0, 242, 254, 0.1), rgba(157, 78, 221, 0.12));
+            border: 1px solid rgba(0, 242, 254, 0.25);
+            padding: 12px 20px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            font-size: 0.9rem;
+            backdrop-filter: blur(10px);
+            flex-wrap: wrap;
+        }
+
+        .instruction-text {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-main);
+        }
+
+        .instruction-text i {
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .mouse-hint {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.82rem;
+            flex-shrink: 0;
+        }
+
+        .hint-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 20px;
+            color: var(--text-main);
+            white-space: nowrap;
+        }
+
+        /* Main Grid Layout */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1.15fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 992px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Cards Style */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 22px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 12px;
+        }
+
+        .card-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-main);
+        }
+
+        .card-title i {
+            color: var(--primary);
+        }
+
+        /* Studio / Canvas Zone */
+        .studio-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .canvas-frame {
+            position: relative;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(0, 242, 254, 0.35);
+            border-radius: 16px;
+            box-shadow: 0 0 25px rgba(0, 242, 254, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .canvas-frame.paper-theme {
+            background: #ffffff;
+            border-color: #00f2fe;
+            box-shadow: 0 0 30px rgba(0, 242, 254, 0.3);
+        }
+
+        #canvas {
+            border-radius: 10px;
+            cursor: crosshair;
+            display: block;
+            touch-action: none;
+        }
+
+        /* Tool Controls */
+        .tools-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .btn-tool {
+            padding: 9px 15px;
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 0.88rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-tool:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .btn-tool.active {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: #000;
+            border-color: var(--primary);
+            font-weight: 700;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .btn-primary-action {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #fff;
+            font-weight: 700;
+            border: none;
+            padding: 10px 22px;
+            border-radius: var(--radius-md);
+            box-shadow: 0 4px 20px var(--primary-glow);
+        }
+
+        .btn-primary-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px var(--secondary-glow);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.15);
+            color: #fca5a5;
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.3);
+            border-color: var(--danger);
+            color: #fff;
+        }
+
+        /* Brush Controls */
+        .brush-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .brush-slider {
+            width: 85px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        /* Toggle switch */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 38px;
+            height: 20px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(255, 255, 255, 0.2);
+            transition: .3s;
+            border-radius: 20px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(18px);
+        }
+
+        /* Preset Digit Buttons */
+        .preset-section {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .preset-label {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .preset-buttons {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 6px;
+        }
+
+        .btn-preset {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            font-weight: 700;
+            padding: 8px 0;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .btn-preset:hover {
+            background: rgba(0, 242, 254, 0.2);
+            border-color: var(--primary);
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        /* Analytics / Result Zone */
+        .analytics-container {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        /* Top Spotlight */
+        .spotlight-card {
+            background: linear-gradient(135deg, rgba(0, 242, 254, 0.1), rgba(157, 78, 221, 0.15));
+            border: 1px solid rgba(0, 242, 254, 0.3);
+            border-radius: var(--radius-md);
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .spotlight-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .digit-display {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .digit-label {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+        }
+
+        .digit-value {
+            font-size: 4.8rem;
+            font-weight: 800;
+            line-height: 1;
+            background: linear-gradient(180deg, #ffffff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 15px var(--primary-glow));
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .confidence-box {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 6px;
+        }
+
+        .confidence-val {
+            font-size: 2.1rem;
+            font-weight: 700;
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .confidence-meter {
+            width: 120px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            border-radius: 4px;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        .audio-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--primary);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 4px;
+        }
+
+        .audio-btn:hover {
+            background: var(--primary);
+            color: #000;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        /* 28x28 Preprocessing Box */
+        .preview-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-md);
+            padding: 12px 16px;
+        }
+
+        .preview-canvas-box {
+            position: relative;
+            width: 56px;
+            height: 56px;
+            border: 2px solid var(--primary);
+            border-radius: 6px;
+            overflow: hidden;
+            background: #000;
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.2);
+        }
+
+        #previewCanvas {
+            width: 56px;
+            height: 56px;
+            image-rendering: pixelated;
+        }
+
+        .preview-info h4 {
+            font-size: 0.9rem;
+            color: var(--text-main);
+            margin-bottom: 2px;
+        }
+
+        .preview-info p {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            line-height: 1.3;
+        }
+
+        /* Probability Bars */
+        .prob-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .prob-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .prob-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.88rem;
+        }
+
+        .prob-digit {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            width: 18px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .prob-bar-bg {
+            flex: 1;
+            height: 13px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 7px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .prob-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 7px;
+            transition: width 0.4s ease, background 0.3s ease;
+        }
+
+        .prob-row.top .prob-digit {
+            color: var(--primary);
+            font-size: 1.05rem;
+        }
+
+        .prob-row.top .prob-bar-fill {
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            box-shadow: 0 0 12px var(--primary-glow);
+        }
+
+        .prob-pct {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            width: 50px;
+            text-align: right;
+            color: var(--text-muted);
+        }
+
+        .prob-row.top .prob-pct {
+            color: #fff;
+            font-weight: 700;
+        }
+
+        /* History Strip */
+        .history-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 2px;
+        }
+
+        .history-list {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 6px;
+        }
+
+        .history-item {
+            flex: 0 0 auto;
+            width: 48px;
+            height: 60px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .history-item:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .history-thumb {
+            width: 26px;
+            height: 26px;
+            border-radius: 4px;
+        }
+
+        .history-val {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Hidden File Input */
+        #fileInput {
+            display: none;
+        }
+
+        /* Responsive tweaks */
+        @media (max-width: 600px) {
+            .app-wrapper {
+                padding: 12px;
+            }
+
+            header {
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
+            }
+
+            .instruction-banner {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            #canvas {
+                width: 280px !important;
+                height: 280px !important;
+            }
+
+            .preset-buttons {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Interactive Particle Canvas -->
+    <canvas id="bgCanvas"></canvas>
+
+    <div class="app-wrapper">
+        <!-- Header -->
+        <header>
+            <div class="brand">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-brain"></i>
+                </div>
+                <div class="brand-title">
+                    <h1>NEURAL DIGIT RECOGNIZER</h1>
+                    <p>PyTorch Deep Learning & Real-time Vision Engine</p>
+                </div>
+            </div>
+
+            <div class="header-badges">
+                <div class="badge badge-status" id="apiStatusBadge">
+                    <span class="status-dot"></span>
+                    <span id="apiStatusText">Checking API...</span>
+                </div>
+                <div class="badge">
+                    <i class="fa-solid fa-microchip" style="color: var(--secondary);"></i>
+                    <span>PyTorch CNN</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Instructions Banner -->
+        <div class="instruction-banner">
+            <div class="instruction-text">
+                <i class="fa-solid fa-circle-info"></i>
+                <span>Draw any digit (0–9) on the canvas to analyze it with Neural Network AI.</span>
+            </div>
+            <div class="mouse-hint">
+                <span class="hint-pill"><i class="fa-solid fa-computer-mouse" style="color:var(--primary);"></i> <strong>Left Click:</strong> Draw</span>
+                <span class="hint-pill"><i class="fa-solid fa-eraser" style="color:var(--secondary);"></i> <strong>Right Click:</strong> Erase</span>
+            </div>
+        </div>
+
+        <!-- Main Studio Grid -->
+        <div class="main-grid">
+            
+            <!-- Left: Drawing Studio -->
+            <div class="glass-card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fa-solid fa-pen-ruler"></i>
+                        <span>Interactive Canvas Studio</span>
+                    </div>
+
+                    <div style="display: flex; gap: 14px; align-items: center;">
+                        <button class="btn-tool" id="themeToggleBtn" style="padding: 4px 10px; font-size: 0.8rem;">
+                            📄 Paper Theme
+                        </button>
+                        <div class="toggle-container">
+                            <span>Auto Predict</span>
+                            <label class="switch">
+                                <input type="checkbox" id="autoPredictToggle" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="studio-container">
+                    <div class="canvas-frame paper-theme" id="canvasFrame">
+                        <canvas id="canvas" width="320" height="320"></canvas>
+                    </div>
+
+                    <!-- Primary Action Buttons -->
+                    <div class="tools-bar">
+                        <button class="btn-tool active" id="drawBtn">
+                            <i class="fa-solid fa-pencil"></i> Draw
+                        </button>
+                        <button class="btn-tool" id="eraseBtn">
+                            <i class="fa-solid fa-eraser"></i> Erase
+                        </button>
+                        <button class="btn-tool" id="undoBtn" title="Undo Stroke">
+                            <i class="fa-solid fa-rotate-left"></i> Undo
+                        </button>
+                        <button class="btn-tool" id="redoBtn" title="Redo Stroke">
+                            <i class="fa-solid fa-rotate-right"></i> Redo
+                        </button>
+                        <button class="btn-tool btn-danger" id="clearBtn">
+                            <i class="fa-solid fa-trash-can"></i> Clear
+                        </button>
+                    </div>
+
+                    <!-- Secondary Tools & Slider -->
+                    <div class="tools-bar" style="justify-content: space-between;">
+                        <div class="brush-controls">
+                            <i class="fa-solid fa-paint-brush"></i>
+                            <span>Width:</span>
+                            <input type="range" id="brushSlider" class="brush-slider" min="12" max="36" value="22">
+                            <span id="brushSizeVal" style="font-family:'JetBrains Mono'; color:#fff;">22px</span>
+                        </div>
+
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn-tool" id="uploadBtn">
+                                <i class="fa-solid fa-upload"></i> Upload
+                            </button>
+                            <button class="btn-tool btn-primary-action" id="predictBtn">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> Predict
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Preset Sample Digits -->
+                    <div class="preset-section">
+                        <div class="preset-label">Sample Presets (Click to Draw Digit onto Canvas):</div>
+                        <div class="preset-buttons">
+                            <button class="btn-preset" onclick="loadSample(0)">0</button>
+                            <button class="btn-preset" onclick="loadSample(1)">1</button>
+                            <button class="btn-preset" onclick="loadSample(2)">2</button>
+                            <button class="btn-preset" onclick="loadSample(3)">3</button>
+                            <button class="btn-preset" onclick="loadSample(4)">4</button>
+                            <button class="btn-preset" onclick="loadSample(5)">5</button>
+                            <button class="btn-preset" onclick="loadSample(6)">6</button>
+                            <button class="btn-preset" onclick="loadSample(7)">7</button>
+                            <button class="btn-preset" onclick="loadSample(8)">8</button>
+                            <button class="btn-preset" onclick="loadSample(9)">9</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Right: AI Analytics & Visualizer -->
+            <div class="glass-card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fa-solid fa-chart-simple"></i>
+                        <span>AI Inference & Analytics</span>
+                    </div>
+                </div>
+
+                <div class="analytics-container">
+                    
+                    <!-- Spotlight Result Card -->
+                    <div class="spotlight-card">
+                        <div class="digit-display">
+                            <span class="digit-label">PREDICTED DIGIT</span>
+                            <span class="digit-value" id="spotlightDigit">-</span>
+                            <span id="modelEngineLabel" style="font-size: 0.72rem; color: var(--text-muted); font-weight: 500; margin-top: 4px;">PyTorch Neural Model</span>
+                        </div>
+
+                        <div class="confidence-box">
+                            <span class="digit-label">CONFIDENCE</span>
+                            <span class="confidence-val" id="spotlightConf">0%</span>
+                            <div class="confidence-meter">
+                                <div class="confidence-fill" id="spotlightMeter"></div>
+                            </div>
+                            <button class="audio-btn" id="audioBtn" title="Speak Prediction">
+                                <i class="fa-solid fa-volume-high"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 28x28 Preprocessing View -->
+                    <div class="preview-section">
+                        <div class="preview-canvas-box">
+                            <canvas id="previewCanvas" width="28" height="28"></canvas>
+                        </div>
+                        <div class="preview-info">
+                            <h4>MNIST 28×28 Neural Input</h4>
+                            <p>Visualizing cropped, centered 28x28 grayscale matrix sent to PyTorch.</p>
+                        </div>
+                    </div>
+
+                    <!-- Probability Bars Grid -->
+                    <div class="prob-section">
+                        <div class="card-title" style="font-size: 0.9rem; color: var(--text-muted);">
+                            <span>Probability Distribution Across All Digits:</span>
+                        </div>
+                        <div class="prob-grid" id="probGrid">
+                            <!-- JS populated rows for 0-9 -->
+                        </div>
+                    </div>
+
+                    <!-- History Strip -->
+                    <div class="history-section">
+                        <div class="card-title" style="font-size: 0.85rem; color: var(--text-muted);">
+                            <span>Recent Predictions Log:</span>
+                        </div>
+                        <div class="history-list" id="historyList">
+                            <span style="font-size: 0.8rem; color: var(--text-muted); font-style: italic;">No drawings yet. Draw a digit to start history.</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <input type="file" id="fileInput" accept="image/*">
+
+    <script>
+        // ==========================================
+        // 1. DYNAMIC BACKGROUND NEURAL PARTICLES
+        // ==========================================
+        const bgCanvas = document.getElementById('bgCanvas');
+        const bgCtx = bgCanvas.getContext('2d');
+
+        let particles = [];
+        let floatingDigits = [];
+        const mouse = { x: null, y: null, radius: 150 };
+
+        function resizeBgCanvas() {
+            bgCanvas.width = window.innerWidth;
+            bgCanvas.height = window.innerHeight;
+            initBgElements();
+        }
+        window.addEventListener('resize', resizeBgCanvas);
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * bgCanvas.width;
+                this.y = Math.random() * bgCanvas.height;
+                this.vx = (Math.random() - 0.5) * 0.8;
+                this.vy = (Math.random() - 0.5) * 0.8;
+                this.radius = Math.random() * 2 + 1;
+                this.color = Math.random() > 0.5 ? 'rgba(0, 242, 254, ' : 'rgba(157, 78, 221, ';
+                this.alpha = Math.random() * 0.5 + 0.2;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.x < 0 || this.x > bgCanvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > bgCanvas.height) this.vy *= -1;
+            }
+
+            draw() {
+                bgCtx.beginPath();
+                bgCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                bgCtx.fillStyle = this.color + this.alpha + ')';
+                bgCtx.fill();
+            }
+        }
+
+        class FloatingDigit {
+            constructor() {
+                this.x = Math.random() * bgCanvas.width;
+                this.y = Math.random() * bgCanvas.height;
+                this.digit = Math.floor(Math.random() * 10);
+                this.fontSize = Math.floor(Math.random() * 24) + 16;
+                this.vy = - (Math.random() * 0.4 + 0.1);
+                this.alpha = Math.random() * 0.25 + 0.08;
+                this.color = Math.random() > 0.5 ? 'rgba(0, 242, 254, ' : 'rgba(157, 78, 221, ';
+            }
+
+            update() {
+                this.y += this.vy;
+                if (this.y < -30) {
+                    this.y = bgCanvas.height + 30;
+                    this.x = Math.random() * bgCanvas.width;
+                }
+            }
+
+            draw() {
+                bgCtx.font = `700 ${this.fontSize}px 'JetBrains Mono', monospace`;
+                bgCtx.fillStyle = this.color + this.alpha + ')';
+                bgCtx.fillText(this.digit, this.x, this.y);
+            }
+        }
+
+        function initBgElements() {
+            particles = [];
+            floatingDigits = [];
+            const particleCount = Math.floor((bgCanvas.width * bgCanvas.height) / 14000);
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+            for (let i = 0; i < 25; i++) {
+                floatingDigits.push(new FloatingDigit());
+            }
+        }
+
+        function animateBg() {
+            bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+            // Update & Draw Floating Digits
+            floatingDigits.forEach(d => {
+                d.update();
+                d.draw();
+            });
+
+            // Update & Draw Particles & Lines
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < 110) {
+                        bgCtx.beginPath();
+                        bgCtx.strokeStyle = `rgba(0, 242, 254, ${0.15 * (1 - dist / 110)})`;
+                        bgCtx.lineWidth = 0.8;
+                        bgCtx.moveTo(particles[i].x, particles[i].y);
+                        bgCtx.lineTo(particles[j].x, particles[j].y);
+                        bgCtx.stroke();
+                    }
+                }
+
+                // Connect to mouse cursor
+                if (mouse.x !== null) {
+                    const mdx = particles[i].x - mouse.x;
+                    const mdy = particles[i].y - mouse.y;
+                    const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
+                    if (mdist < mouse.radius) {
+                        bgCtx.beginPath();
+                        bgCtx.strokeStyle = `rgba(157, 78, 221, ${0.3 * (1 - mdist / mouse.radius)})`;
+                        bgCtx.lineWidth = 1.2;
+                        bgCtx.moveTo(particles[i].x, particles[i].y);
+                        bgCtx.lineTo(mouse.x, mouse.y);
+                        bgCtx.stroke();
+                    }
+                }
+            }
+
+            requestAnimationFrame(animateBg);
+        }
+
+        resizeBgCanvas();
+        animateBg();
+
+
+        // ==========================================
+        // 2. CANVAS STUDIO & DRAWING ENGINE
+        // ==========================================
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const previewCanvas = document.getElementById('previewCanvas');
+        const previewCtx = previewCanvas.getContext('2d');
+
+        let isDrawing = false;
+        let currentTool = 'draw'; // 'draw' or 'erase'
+        let isPaperTheme = true; // Paper mode (white bg, black ink) by default
+        let brushSize = 22;
+
+        let canvasBgColor = '#ffffff';
+        let strokeColor = '#000000';
+
+        // Undo / Redo Stacks
+        let undoStack = [];
+        let redoStack = [];
+        const MAX_HISTORY = 20;
+
+        function updateCanvasTheme() {
+            const frame = document.getElementById('canvasFrame');
+            const btn = document.getElementById('themeToggleBtn');
+            if (isPaperTheme) {
+                canvasBgColor = '#ffffff';
+                strokeColor = '#000000';
+                frame.classList.add('paper-theme');
+                btn.textContent = '📄 Paper Theme';
+            } else {
+                canvasBgColor = '#000000';
+                strokeColor = '#ffffff';
+                frame.classList.remove('paper-theme');
+                btn.textContent = '🌙 Cyber Theme';
+            }
+            initMainCanvas();
+        }
+
+        document.getElementById('themeToggleBtn').addEventListener('click', () => {
+            isPaperTheme = !isPaperTheme;
+            updateCanvasTheme();
+        });
+
+        function initMainCanvas() {
+            ctx.fillStyle = canvasBgColor;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.strokeStyle = strokeColor;
+            ctx.lineWidth = brushSize;
+            undoStack = [];
+            redoStack = [];
+            saveCanvasState();
+            updatePreview();
+        }
+
+        function saveCanvasState() {
+            if (undoStack.length >= MAX_HISTORY) undoStack.shift();
+            undoStack.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+            redoStack = [];
+        }
+
+        function restoreState(imageData) {
+            ctx.putImageData(imageData, 0, 0);
+            updatePreview();
+            if (document.getElementById('autoPredictToggle').checked) {
+                debouncedPredict();
+            }
+        }
+
+        function getCanvasCoords(e) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return {
+                x: (clientX - rect.left) * (canvas.width / rect.width),
+                y: (clientY - rect.top) * (canvas.height / rect.height)
+            };
+        }
+
+        let lastX = 0, lastY = 0;
+
+        function startDrawing(e) {
+            const isRightClick = (e.button === 2);
+            if (isRightClick) e.preventDefault();
+
+            isDrawing = true;
+            const pos = getCanvasCoords(e);
+            lastX = pos.x;
+            lastY = pos.y;
+
+            const isErasing = (currentTool === 'erase' || isRightClick);
+            ctx.strokeStyle = isErasing ? canvasBgColor : strokeColor;
+            ctx.lineWidth = isErasing ? brushSize * 1.6 : brushSize;
+
+            ctx.beginPath();
+            ctx.arc(pos.x, pos.y, ctx.lineWidth / 2, 0, Math.PI * 2);
+            ctx.fillStyle = ctx.strokeStyle;
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.moveTo(pos.x, pos.y);
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            const isRightClick = (e.buttons === 2 || currentTool === 'erase');
+            if (e.buttons === 2) e.preventDefault();
+
+            const pos = getCanvasCoords(e);
+            ctx.strokeStyle = isRightClick ? canvasBgColor : strokeColor;
+            ctx.lineWidth = isRightClick ? brushSize * 1.6 : brushSize;
+
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+
+            lastX = pos.x;
+            lastY = pos.y;
+
+            updatePreview();
+            if (document.getElementById('autoPredictToggle').checked) {
+                debouncedPredict();
+            }
+        }
+
+        function stopDrawing() {
+            if (isDrawing) {
+                isDrawing = false;
+                ctx.closePath();
+                saveCanvasState();
+            }
+        }
+
+        // Mouse Events
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseleave', stopDrawing);
+        canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+
+        // Touch Events
+        canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startDrawing(e); });
+        canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e); });
+        canvas.addEventListener('touchend', (e) => { e.preventDefault(); stopDrawing(); });
+
+        // Tool Controls
+        const drawBtn = document.getElementById('drawBtn');
+        const eraseBtn = document.getElementById('eraseBtn');
+        const brushSlider = document.getElementById('brushSlider');
+        const brushSizeVal = document.getElementById('brushSizeVal');
+
+        drawBtn.addEventListener('click', () => {
+            currentTool = 'draw';
+            drawBtn.classList.add('active');
+            eraseBtn.classList.remove('active');
+        });
+
+        eraseBtn.addEventListener('click', () => {
+            currentTool = 'erase';
+            eraseBtn.classList.add('active');
+            drawBtn.classList.remove('active');
+        });
+
+        brushSlider.addEventListener('input', (e) => {
+            brushSize = parseInt(e.target.value);
+            brushSizeVal.textContent = brushSize + 'px';
+        });
+
+        document.getElementById('clearBtn').addEventListener('click', () => {
+            initMainCanvas();
+            resetResults();
+        });
+
+        document.getElementById('undoBtn').addEventListener('click', () => {
+            if (undoStack.length > 1) {
+                redoStack.push(undoStack.pop());
+                const prevState = undoStack[undoStack.length - 1];
+                restoreState(prevState);
+            }
+        });
+
+        document.getElementById('redoBtn').addEventListener('click', () => {
+            if (redoStack.length > 0) {
+                const nextState = redoStack.pop();
+                undoStack.push(nextState);
+                restoreState(nextState);
+            }
+        });
+
+        // Upload Image
+        const uploadBtn = document.getElementById('uploadBtn');
+        const fileInput = document.getElementById('fileInput');
+
+        uploadBtn.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (evt) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        ctx.fillStyle = canvasBgColor;
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        
+                        const scale = Math.min(canvas.width / img.width, canvas.height / img.height) * 0.8;
+                        const x = (canvas.width - img.width * scale) / 2;
+                        const y = (canvas.height - img.height * scale) / 2;
+                        
+                        ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+                        saveCanvasState();
+                        updatePreview();
+                        triggerPrediction();
+                    };
+                    img.src = evt.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // 28x28 Preprocessing Visualizer with Centering
+        function updatePreview() {
+            previewCtx.fillStyle = '#000000';
+            previewCtx.fillRect(0, 0, 28, 28);
+
+            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imgData.data;
+
+            // Check canvas background (Paper theme is white #fff, Cyber theme is black #000)
+            const isWhiteBg = (canvasBgColor === '#ffffff');
+
+            let minX = canvas.width, minY = canvas.height, maxX = 0, maxY = 0;
+            let found = false;
+
+            for (let y = 0; y < canvas.height; y++) {
+                for (let x = 0; x < canvas.width; x++) {
+                    const idx = (y * canvas.width + x) * 4;
+                    const r = data[idx], g = data[idx + 1], b = data[idx + 2];
+                    
+                    // Is pixel part of digit stroke?
+                    const isStroke = isWhiteBg ? (r < 200 || g < 200 || b < 200) : (r > 30 || g > 30 || b > 30);
+                    if (isStroke) {
+                        if (x < minX) minX = x;
+                        if (x > maxX) maxX = x;
+                        if (y < minY) minY = y;
+                        if (y > maxY) maxY = y;
+                        found = true;
+                    }
+                }
+            }
+
+            if (found) {
+                const pad = 15;
+                minX = Math.max(0, minX - pad);
+                minY = Math.max(0, minY - pad);
+                maxX = Math.min(canvas.width, maxX + pad);
+                maxY = Math.min(canvas.height, maxY + pad);
+
+                const cropWidth = maxX - minX;
+                const cropHeight = maxY - minY;
+
+                let drawW = 20, drawH = 20;
+                if (cropWidth > cropHeight) {
+                    drawH = Math.max(1, Math.round(20 * (cropHeight / cropWidth)));
+                } else {
+                    drawW = Math.max(1, Math.round(20 * (cropWidth / cropHeight)));
+                }
+
+                const dx = Math.round((28 - drawW) / 2);
+                const dy = Math.round((28 - drawH) / 2);
+
+                // Temporary canvas for inverted/clean 28x28 rendering
+                const tempC = document.createElement('canvas');
+                tempC.width = cropWidth;
+                tempC.height = cropHeight;
+                const tCtx = tempC.getContext('2d');
+                tCtx.drawImage(canvas, minX, minY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
+
+                if (isWhiteBg) {
+                    // Invert white background to black background for preview
+                    const cData = tCtx.getImageData(0, 0, cropWidth, cropHeight);
+                    for (let i = 0; i < cData.data.length; i += 4) {
+                        const gray = 255 - ((cData.data[i] + cData.data[i+1] + cData.data[i+2]) / 3);
+                        cData.data[i] = gray;
+                        cData.data[i+1] = gray;
+                        cData.data[i+2] = gray;
+                    }
+                    tCtx.putImageData(cData, 0, 0);
+                }
+
+                previewCtx.drawImage(tempC, 0, 0, cropWidth, cropHeight, dx, dy, drawW, drawH);
+            } else {
+                previewCtx.drawImage(canvas, 0, 0, 28, 28);
+            }
+        }
+
+
+        // ==========================================
+        // 3. SAMPLE PRESETS DRAWING GENERATOR
+        // ==========================================
+        function loadSample(digit) {
+            ctx.fillStyle = canvasBgColor;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = strokeColor;
+            ctx.lineWidth = 24;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+
+            ctx.beginPath();
+            switch (digit) {
+                case 0:
+                    ctx.ellipse(cx, cy, 55, 85, 0, 0, Math.PI * 2);
+                    break;
+                case 1:
+                    ctx.moveTo(cx - 15, cy - 75);
+                    ctx.lineTo(cx, cy - 85);
+                    ctx.lineTo(cx, cy + 85);
+                    break;
+                case 2:
+                    ctx.arc(cx, cy - 40, 45, Math.PI * 0.9, Math.PI * 2.1);
+                    ctx.lineTo(cx - 45, cy + 75);
+                    ctx.lineTo(cx + 50, cy + 75);
+                    break;
+                case 3:
+                    ctx.arc(cx - 5, cy - 35, 42, Math.PI * 1.2, Math.PI * 0.4);
+                    ctx.arc(cx - 5, cy + 35, 42, Math.PI * 1.6, Math.PI * 0.8);
+                    break;
+                case 4:
+                    ctx.moveTo(cx + 25, cy + 75);
+                    ctx.lineTo(cx + 25, cy - 75);
+                    ctx.lineTo(cx - 50, cy + 15);
+                    ctx.lineTo(cx + 60, cy + 15);
+                    break;
+                case 5:
+                    ctx.moveTo(cx + 45, cy - 75);
+                    ctx.lineTo(cx - 35, cy - 75);
+                    ctx.lineTo(cx - 40, cy - 10);
+                    ctx.arc(cx - 5, cy + 30, 45, Math.PI * 1.3, Math.PI * 0.7);
+                    break;
+                case 6:
+                    ctx.arc(cx, cy + 30, 45, 0, Math.PI * 2);
+                    ctx.moveTo(cx + 35, cy + 10);
+                    ctx.lineTo(cx - 15, cy - 75);
+                    break;
+                case 7:
+                    ctx.moveTo(cx - 55, cy - 75);
+                    ctx.lineTo(cx + 55, cy - 75);
+                    ctx.lineTo(cx - 25, cy + 75);
+                    break;
+                case 8:
+                    ctx.arc(cx, cy - 35, 38, 0, Math.PI * 2);
+                    ctx.arc(cx, cy + 35, 45, 0, Math.PI * 2);
+                    break;
+                case 9:
+                    ctx.arc(cx, cy - 25, 45, 0, Math.PI * 2);
+                    ctx.moveTo(cx + 40, cy - 25);
+                    ctx.lineTo(cx + 15, cy + 75);
+                    break;
+            }
+            ctx.stroke();
+
+            saveCanvasState();
+            updatePreview();
+            triggerPrediction();
+        }
+
+
+        // ==========================================
+        // 4. PROBABILITY BARS INITIALIZATION
+        // ==========================================
+        const probGrid = document.getElementById('probGrid');
+        function initProbGrid() {
+            probGrid.innerHTML = '';
+            for (let i = 0; i < 10; i++) {
+                const row = document.createElement('div');
+                row.className = 'prob-row';
+                row.id = `prob-row-${i}`;
+                row.innerHTML = `
+                    <span class="prob-digit">${i}</span>
+                    <div class="prob-bar-bg">
+                        <div class="prob-bar-fill" id="prob-fill-${i}"></div>
+                    </div>
+                    <span class="prob-pct" id="prob-pct-${i}">0.0%</span>
+                `;
+                probGrid.appendChild(row);
+            }
+        }
+        initProbGrid();
+
+
+        // ==========================================
+        // 5. INFERENCE & API INTEGRATION ENGINE
+        // ==========================================
+        const API_URL = 'http://localhost:8000';
+        let isBackendOnline = false;
+
+        async function checkBackendStatus() {
+            const badge = document.getElementById('apiStatusBadge');
+            const statusText = document.getElementById('apiStatusText');
+            try {
+                const res = await fetch(`${API_URL}/`, { method: 'GET', signal: AbortSignal.timeout(1500) });
+                if (res.ok) {
+                    isBackendOnline = true;
+                    badge.className = 'badge badge-status';
+                    statusText.textContent = 'PyTorch API Online';
+                    return;
+                }
+            } catch (e) {
+                // Offline
+            }
+            isBackendOnline = false;
+            badge.className = 'badge badge-status offline';
+            statusText.textContent = 'PyTorch Offline (JS Fallback Active)';
+        }
+        checkBackendStatus();
+        setInterval(checkBackendStatus, 3000);
+
+        let debounceTimer = null;
+        function debouncedPredict() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(triggerPrediction, 120);
+        }
+
+        document.getElementById('predictBtn').addEventListener('click', triggerPrediction);
+
+        async function triggerPrediction() {
+            const base64Image = canvas.toDataURL('image/png');
+
+            if (isBackendOnline) {
+                try {
+                    const res = await fetch(`${API_URL}/predict`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ image: base64Image })
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        document.getElementById('modelEngineLabel').textContent = '⚡ PyTorch Neural Model (Python)';
+                        displayResults(data.prediction, data.confidence, data.probabilities);
+                        return;
+                    }
+                } catch (err) {
+                    console.warn('Backend call failed, switching to local JS engine:', err);
+                }
+            }
+
+            // Standalone Local JS Neural Feature Heuristic Engine (Fallback)
+            document.getElementById('modelEngineLabel').textContent = '🌐 In-Browser JS Engine (Offline Fallback)';
+            const localResult = predictLocalJS();
+            displayResults(localResult.prediction, localResult.confidence, localResult.probabilities);
+        }
+
+        // Fast Client-Side Standalone Inference Heuristic
+        function predictLocalJS() {
+            const imgData = previewCtx.getImageData(0, 0, 28, 28).data;
+            const grid = [];
+            let totalPixels = 0;
+
+            for (let i = 0; i < 28 * 28; i++) {
+                const val = imgData[i * 4]; // R channel
+                grid.push(val / 255.0);
+                if (val > 40) totalPixels++;
+            }
+
+            if (totalPixels < 10) {
+                return { prediction: 0, confidence: 0, probabilities: new Array(10).fill(0.1) };
+            }
+
+            // Calculate feature metrics
+            let minX = 28, maxX = 0, minY = 28, maxY = 0;
+            let sumX = 0, sumY = 0;
+
+            for (let y = 0; y < 28; y++) {
+                for (let x = 0; x < 28; x++) {
+                    if (grid[y * 28 + x] > 0.15) {
+                        minX = Math.min(minX, x); maxX = Math.max(maxX, x);
+                        minY = Math.min(minY, y); maxY = Math.max(maxY, y);
+                        sumX += x; sumY += y;
+                    }
+                }
+            }
+
+            const width = Math.max(1, maxX - minX);
+            const height = Math.max(1, maxY - minY);
+            const aspectRatio = width / height;
+            const avgY = sumY / totalPixels;
+
+            let probs = new Array(10).fill(0.05);
+
+            if (aspectRatio < 0.38) {
+                probs[1] = 0.85; probs[7] = 0.1;
+            } else if (aspectRatio > 0.85 && avgY < 14) {
+                probs[0] = 0.75; probs[8] = 0.15;
+            } else if (avgY < 12) {
+                probs[7] = 0.70; probs[3] = 0.15;
+            } else {
+                probs[0] = 0.12; probs[2] = 0.15; probs[3] = 0.18; probs[4] = 0.10;
+                probs[5] = 0.12; probs[6] = 0.10; probs[8] = 0.15; probs[9] = 0.08;
+            }
+
+            const sumProb = probs.reduce((a, b) => a + b, 0);
+            probs = probs.map(p => p / sumProb);
+
+            const maxP = Math.max(...probs);
+            const pred = probs.indexOf(maxP);
+
+            return { prediction: pred, confidence: maxP, probabilities: probs };
+        }
+
+        // Update UI Display with Prediction Results
+        let lastAnnouncedDigit = null;
+
+        function displayResults(digit, confidence, probabilities) {
+            document.getElementById('spotlightDigit').textContent = digit;
+            const confPctStr = (confidence * 100).toFixed(1) + '%';
+            document.getElementById('spotlightConf').textContent = confPctStr;
+            document.getElementById('spotlightMeter').style.width = confPctStr;
+
+            for (let i = 0; i < 10; i++) {
+                const row = document.getElementById(`prob-row-${i}`);
+                const fill = document.getElementById(`prob-fill-${i}`);
+                const pct = document.getElementById(`prob-pct-${i}`);
+
+                const val = probabilities ? probabilities[i] : (i === digit ? confidence : 0.02);
+                const pctVal = (val * 100).toFixed(1) + '%';
+
+                fill.style.width = pctVal;
+                pct.textContent = pctVal;
+
+                if (i === digit) {
+                    row.classList.add('top');
+                } else {
+                    row.classList.remove('top');
+                }
+            }
+
+            if (confidence > 0.15 && lastAnnouncedDigit !== digit) {
+                addHistoryItem(digit, confidence);
+                lastAnnouncedDigit = digit;
+            }
+        }
+
+        function resetResults() {
+            document.getElementById('spotlightDigit').textContent = '-';
+            document.getElementById('spotlightConf').textContent = '0%';
+            document.getElementById('spotlightMeter').style.width = '0%';
+            for (let i = 0; i < 10; i++) {
+                const row = document.getElementById(`prob-row-${i}`);
+                document.getElementById(`prob-fill-${i}`).style.width = '0%';
+                document.getElementById(`prob-pct-${i}`).textContent = '0.0%';
+                row.classList.remove('top');
+            }
+            lastAnnouncedDigit = null;
+        }
+
+        // Speech Synthesizer
+        document.getElementById('audioBtn').addEventListener('click', () => {
+            const digit = document.getElementById('spotlightDigit').textContent;
+            const conf = document.getElementById('spotlightConf').textContent;
+            if (digit !== '-') {
+                const text = `Predicted Digit ${digit} with ${conf} confidence.`;
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 1.0;
+                window.speechSynthesis.speak(utterance);
+            }
+        });
+
+        // History Gallery Log
+        const historyList = document.getElementById('historyList');
+        let historyCount = 0;
+
+        function addHistoryItem(digit, confidence) {
+            if (historyCount === 0) {
+                historyList.innerHTML = '';
+            }
+
+            const item = document.createElement('div');
+            item.className = 'history-item';
+            
+            const thumbCanvas = document.createElement('canvas');
+            thumbCanvas.width = 28;
+            thumbCanvas.height = 28;
+            thumbCanvas.className = 'history-thumb';
+            const tCtx = thumbCanvas.getContext('2d');
+            tCtx.drawImage(canvas, 0, 0, 28, 28);
+
+            item.appendChild(thumbCanvas);
+
+            const valSpan = document.createElement('span');
+            valSpan.className = 'history-val';
+            valSpan.textContent = digit;
+            item.appendChild(valSpan);
+
+            item.title = `Digit ${digit} (${(confidence * 100).toFixed(0)}%)`;
+
+            historyList.insertBefore(item, historyList.firstChild);
+            historyCount++;
+
+            if (historyList.children.length > 10) {
+                historyList.removeChild(historyList.lastChild);
+            }
+        }
+
+        // Initialize canvas
+        updateCanvasTheme();
+    </script>
+</body>
+</html>
