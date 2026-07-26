@@ -473,7 +473,7 @@
         .analytics-container {
             display: flex;
             flex-direction: column;
-            gap: 18px;
+            gap: 16px;
         }
 
         /* Top Spotlight */
@@ -521,6 +521,17 @@
             -webkit-text-fill-color: transparent;
             filter: drop-shadow(0 0 15px var(--primary-glow));
             font-family: 'JetBrains Mono', monospace;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .digit-value.pop {
+            animation: rankPop 0.3s ease;
+        }
+
+        @keyframes rankPop {
+            0% { transform: scale(0.85); opacity: 0.7; }
+            50% { transform: scale(1.18); opacity: 1; }
+            100% { transform: scale(1.0); }
         }
 
         .confidence-box {
@@ -550,7 +561,7 @@
             width: 0%;
             background: linear-gradient(90deg, var(--secondary), var(--primary));
             border-radius: 4px;
-            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: width 0.15s cubic-bezier(0.1, 0.9, 0.2, 1);
             box-shadow: 0 0 10px var(--primary);
         }
 
@@ -575,6 +586,70 @@
             box-shadow: 0 0 15px var(--primary-glow);
         }
 
+        /* 10-Class Live Class Badges Matrix */
+        .live-matrix-section {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .live-matrix-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 5px;
+        }
+
+        .matrix-pill {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 6px;
+            padding: 6px 2px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            transition: all 0.15s ease;
+        }
+
+        .matrix-digit {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .matrix-bar-mini {
+            width: 80%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .matrix-fill-mini {
+            height: 100%;
+            width: 0%;
+            background: var(--primary);
+            transition: width 0.12s ease;
+        }
+
+        .matrix-pill.active {
+            background: rgba(0, 242, 254, 0.18);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 0 12px var(--primary-glow);
+        }
+
+        .matrix-pill.active .matrix-digit {
+            color: #fff;
+            font-size: 0.95rem;
+        }
+
+        .matrix-pill.active .matrix-fill-mini {
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+        }
+
         /* 28x28 Preprocessing Box */
         .preview-section {
             display: flex;
@@ -583,13 +658,13 @@
             background: rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: var(--radius-md);
-            padding: 12px 16px;
+            padding: 10px 14px;
         }
 
         .preview-canvas-box {
             position: relative;
-            width: 56px;
-            height: 56px;
+            width: 52px;
+            height: 52px;
             border: 2px solid var(--primary);
             border-radius: 6px;
             overflow: hidden;
@@ -598,34 +673,34 @@
         }
 
         #previewCanvas {
-            width: 56px;
-            height: 56px;
+            width: 52px;
+            height: 52px;
             image-rendering: pixelated;
         }
 
         .preview-info h4 {
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             color: var(--text-main);
             margin-bottom: 2px;
         }
 
         .preview-info p {
-            font-size: 0.78rem;
+            font-size: 0.76rem;
             color: var(--text-muted);
             line-height: 1.3;
         }
 
-        /* Probability Bars */
+        /* Probability Bars Grid */
         .prob-section {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
         }
 
         .prob-grid {
             display: flex;
             flex-direction: column;
-            gap: 7px;
+            gap: 6px;
         }
 
         .prob-row {
@@ -633,6 +708,7 @@
             align-items: center;
             gap: 12px;
             font-size: 0.88rem;
+            transition: transform 0.15s ease;
         }
 
         .prob-digit {
@@ -641,6 +717,7 @@
             width: 18px;
             color: var(--text-muted);
             text-align: center;
+            transition: color 0.15s ease, font-size 0.15s ease;
         }
 
         .prob-bar-bg {
@@ -655,19 +732,24 @@
         .prob-bar-fill {
             height: 100%;
             width: 0%;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.18);
             border-radius: 7px;
-            transition: width 0.4s ease, background 0.3s ease;
+            transition: width 0.12s cubic-bezier(0.1, 0.9, 0.2, 1), background 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .prob-row.top {
+            transform: scale(1.02);
         }
 
         .prob-row.top .prob-digit {
             color: var(--primary);
-            font-size: 1.05rem;
+            font-size: 1.08rem;
+            text-shadow: 0 0 10px var(--primary-glow);
         }
 
         .prob-row.top .prob-bar-fill {
             background: linear-gradient(90deg, var(--secondary), var(--primary));
-            box-shadow: 0 0 12px var(--primary-glow);
+            box-shadow: 0 0 14px var(--primary-glow);
         }
 
         .prob-pct {
@@ -676,6 +758,7 @@
             width: 50px;
             text-align: right;
             color: var(--text-muted);
+            transition: color 0.15s ease, font-weight 0.15s ease;
         }
 
         .prob-row.top .prob-pct {
@@ -687,21 +770,21 @@
         .history-section {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
             margin-top: 2px;
         }
 
         .history-list {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             overflow-x: auto;
-            padding-bottom: 6px;
+            padding-bottom: 4px;
         }
 
         .history-item {
             flex: 0 0 auto;
-            width: 48px;
-            height: 60px;
+            width: 44px;
+            height: 56px;
             background: rgba(0, 0, 0, 0.4);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 8px;
@@ -720,24 +803,22 @@
         }
 
         .history-thumb {
-            width: 26px;
-            height: 26px;
+            width: 24px;
+            height: 24px;
             border-radius: 4px;
         }
 
         .history-val {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             font-weight: 700;
             color: var(--primary);
         }
 
-        /* Hidden File Input */
         #fileInput {
             display: none;
         }
 
-        /* Responsive tweaks */
         @media (max-width: 600px) {
             .app-wrapper {
                 padding: 12px;
@@ -799,7 +880,7 @@
         <div class="instruction-banner">
             <div class="instruction-text">
                 <i class="fa-solid fa-circle-info"></i>
-                <span>Draw any digit (0–9) on the canvas to analyze it with Neural Network AI.</span>
+                <span>Draw any digit (0–9) on the canvas to watch live 10-class neural probability animations in real time!</span>
             </div>
             <div class="mouse-hint">
                 <span class="hint-pill"><i class="fa-solid fa-computer-mouse" style="color:var(--primary);"></i> <strong>Left Click:</strong> Draw</span>
@@ -818,12 +899,12 @@
                         <span>Interactive Canvas Studio</span>
                     </div>
 
-                    <div style="display: flex; gap: 14px; align-items: center;">
+                    <div style="display: flex; gap: 12px; align-items: center;">
                         <button class="btn-tool" id="themeToggleBtn" style="padding: 4px 10px; font-size: 0.8rem;">
                             📄 Paper Theme
                         </button>
                         <div class="toggle-container">
-                            <span>Auto Predict</span>
+                            <span>Live Streaming</span>
                             <label class="switch">
                                 <input type="checkbox" id="autoPredictToggle" checked>
                                 <span class="slider"></span>
@@ -900,7 +981,7 @@
                 <div class="card-header">
                     <div class="card-title">
                         <i class="fa-solid fa-chart-simple"></i>
-                        <span>AI Inference & Analytics</span>
+                        <span>Live 10-Class Neural Spectrum</span>
                     </div>
                 </div>
 
@@ -909,7 +990,7 @@
                     <!-- Spotlight Result Card -->
                     <div class="spotlight-card">
                         <div class="digit-display">
-                            <span class="digit-label">PREDICTED DIGIT</span>
+                            <span class="digit-label">TOP PREDICTION</span>
                             <span class="digit-value" id="spotlightDigit">-</span>
                             <span id="modelEngineLabel" style="font-size: 0.72rem; color: var(--text-muted); font-weight: 500; margin-top: 4px;">PyTorch Neural Model</span>
                         </div>
@@ -926,21 +1007,31 @@
                         </div>
                     </div>
 
+                    <!-- 10-Class Live Radar Matrix Grid -->
+                    <div class="live-matrix-section">
+                        <div class="card-title" style="font-size: 0.82rem; color: var(--text-muted);">
+                            <span>Live 10-Class Neural Radar:</span>
+                        </div>
+                        <div class="live-matrix-grid" id="matrixGrid">
+                            <!-- JS populated pills 0-9 -->
+                        </div>
+                    </div>
+
                     <!-- 28x28 Preprocessing View -->
                     <div class="preview-section">
                         <div class="preview-canvas-box">
                             <canvas id="previewCanvas" width="28" height="28"></canvas>
                         </div>
                         <div class="preview-info">
-                            <h4>MNIST 28×28 Neural Input</h4>
-                            <p>Visualizing cropped, centered 28x28 grayscale matrix sent to PyTorch.</p>
+                            <h4>MNIST 28×28 Neural Matrix</h4>
+                            <p>Live cropped & centered 28x28 grayscale input sent to neural net.</p>
                         </div>
                     </div>
 
                     <!-- Probability Bars Grid -->
                     <div class="prob-section">
-                        <div class="card-title" style="font-size: 0.9rem; color: var(--text-muted);">
-                            <span>Probability Distribution Across All Digits:</span>
+                        <div class="card-title" style="font-size: 0.85rem; color: var(--text-muted);">
+                            <span>Live Probability Distribution Across All Digits:</span>
                         </div>
                         <div class="prob-grid" id="probGrid">
                             <!-- JS populated rows for 0-9 -->
@@ -949,7 +1040,7 @@
 
                     <!-- History Strip -->
                     <div class="history-section">
-                        <div class="card-title" style="font-size: 0.85rem; color: var(--text-muted);">
+                        <div class="card-title" style="font-size: 0.82rem; color: var(--text-muted);">
                             <span>Recent Predictions Log:</span>
                         </div>
                         <div class="history-list" id="historyList">
@@ -1056,13 +1147,11 @@
         function animateBg() {
             bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
 
-            // Update & Draw Floating Digits
             floatingDigits.forEach(d => {
                 d.update();
                 d.draw();
             });
 
-            // Update & Draw Particles & Lines
             for (let i = 0; i < particles.length; i++) {
                 particles[i].update();
                 particles[i].draw();
@@ -1082,7 +1171,6 @@
                     }
                 }
 
-                // Connect to mouse cursor
                 if (mouse.x !== null) {
                     const mdx = particles[i].x - mouse.x;
                     const mdy = particles[i].y - mouse.y;
@@ -1106,7 +1194,7 @@
 
 
         // ==========================================
-        // 2. CANVAS STUDIO & DRAWING ENGINE
+        // 2. CANVAS STUDIO & REAL-TIME DRAWING STREAM ENGINE
         // ==========================================
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
@@ -1114,14 +1202,13 @@
         const previewCtx = previewCanvas.getContext('2d');
 
         let isDrawing = false;
-        let currentTool = 'draw'; // 'draw' or 'erase'
-        let isPaperTheme = true; // Paper mode (white bg, black ink) by default
+        let currentTool = 'draw';
+        let isPaperTheme = true;
         let brushSize = 22;
 
         let canvasBgColor = '#ffffff';
         let strokeColor = '#000000';
 
-        // Undo / Redo Stacks
         let undoStack = [];
         let redoStack = [];
         const MAX_HISTORY = 20;
@@ -1171,7 +1258,7 @@
             ctx.putImageData(imageData, 0, 0);
             updatePreview();
             if (document.getElementById('autoPredictToggle').checked) {
-                debouncedPredict();
+                triggerLiveStreamPrediction();
             }
         }
 
@@ -1185,16 +1272,12 @@
             };
         }
 
-        let lastX = 0, lastY = 0;
-
         function startDrawing(e) {
             const isRightClick = (e.button === 2);
             if (isRightClick) e.preventDefault();
 
             isDrawing = true;
             const pos = getCanvasCoords(e);
-            lastX = pos.x;
-            lastY = pos.y;
 
             const isErasing = (currentTool === 'erase' || isRightClick);
             ctx.strokeStyle = isErasing ? canvasBgColor : strokeColor;
@@ -1221,12 +1304,11 @@
             ctx.lineTo(pos.x, pos.y);
             ctx.stroke();
 
-            lastX = pos.x;
-            lastY = pos.y;
-
             updatePreview();
+
+            // REAL-TIME 60 FPS LIVE ANIMATION STREAM WHILE DRAWING
             if (document.getElementById('autoPredictToggle').checked) {
-                debouncedPredict();
+                triggerLiveStreamPrediction();
             }
         }
 
@@ -1333,7 +1415,6 @@
             const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             const data = imgData.data;
 
-            // Check canvas background (Paper theme is white #fff, Cyber theme is black #000)
             const isWhiteBg = (canvasBgColor === '#ffffff');
 
             let minX = canvas.width, minY = canvas.height, maxX = 0, maxY = 0;
@@ -1344,7 +1425,6 @@
                     const idx = (y * canvas.width + x) * 4;
                     const r = data[idx], g = data[idx + 1], b = data[idx + 2];
                     
-                    // Is pixel part of digit stroke?
                     const isStroke = isWhiteBg ? (r < 200 || g < 200 || b < 200) : (r > 30 || g > 30 || b > 30);
                     if (isStroke) {
                         if (x < minX) minX = x;
@@ -1376,7 +1456,6 @@
                 const dx = Math.round((28 - drawW) / 2);
                 const dy = Math.round((28 - drawH) / 2);
 
-                // Temporary canvas for inverted/clean 28x28 rendering
                 const tempC = document.createElement('canvas');
                 tempC.width = cropWidth;
                 tempC.height = cropHeight;
@@ -1384,7 +1463,6 @@
                 tCtx.drawImage(canvas, minX, minY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
 
                 if (isWhiteBg) {
-                    // Invert white background to black background for preview
                     const cData = tCtx.getImageData(0, 0, cropWidth, cropHeight);
                     for (let i = 0; i < cData.data.length; i += 4) {
                         const gray = 255 - ((cData.data[i] + cData.data[i+1] + cData.data[i+2]) / 3);
@@ -1476,12 +1554,17 @@
 
 
         // ==========================================
-        // 4. PROBABILITY BARS INITIALIZATION
+        // 4. PROBABILITY BARS & LIVE 10-CLASS RADAR MATRIX
         // ==========================================
         const probGrid = document.getElementById('probGrid');
-        function initProbGrid() {
+        const matrixGrid = document.getElementById('matrixGrid');
+
+        function initUIContainers() {
             probGrid.innerHTML = '';
+            matrixGrid.innerHTML = '';
+
             for (let i = 0; i < 10; i++) {
+                // Prob Row
                 const row = document.createElement('div');
                 row.className = 'prob-row';
                 row.id = `prob-row-${i}`;
@@ -1493,16 +1576,30 @@
                     <span class="prob-pct" id="prob-pct-${i}">0.0%</span>
                 `;
                 probGrid.appendChild(row);
+
+                // Matrix Pill
+                const pill = document.createElement('div');
+                pill.className = 'matrix-pill';
+                pill.id = `matrix-pill-${i}`;
+                pill.innerHTML = `
+                    <span class="matrix-digit">${i}</span>
+                    <div class="matrix-bar-mini">
+                        <div class="matrix-fill-mini" id="matrix-fill-${i}"></div>
+                    </div>
+                `;
+                matrixGrid.appendChild(pill);
             }
         }
-        initProbGrid();
+        initUIContainers();
 
 
         // ==========================================
-        // 5. INFERENCE & API INTEGRATION ENGINE
+        // 5. LIVE 60 FPS REAL-TIME INFERENCE STREAM ENGINE
         // ==========================================
         const API_URL = 'http://localhost:8000';
         let isBackendOnline = false;
+        let isApiFetchPending = false;
+        let animationFrameId = null;
 
         async function checkBackendStatus() {
             const badge = document.getElementById('apiStatusBadge');
@@ -1525,10 +1622,11 @@
         checkBackendStatus();
         setInterval(checkBackendStatus, 3000);
 
-        let debounceTimer = null;
-        function debouncedPredict() {
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(triggerPrediction, 120);
+        function triggerLiveStreamPrediction() {
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            animationFrameId = requestAnimationFrame(() => {
+                triggerPrediction();
+            });
         }
 
         document.getElementById('predictBtn').addEventListener('click', triggerPrediction);
@@ -1537,24 +1635,28 @@
             const base64Image = canvas.toDataURL('image/png');
 
             if (isBackendOnline) {
-                try {
-                    const res = await fetch(`${API_URL}/predict`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ image: base64Image })
-                    });
-                    if (res.ok) {
-                        const data = await res.json();
-                        document.getElementById('modelEngineLabel').textContent = '⚡ PyTorch Neural Model (Python)';
-                        displayResults(data.prediction, data.confidence, data.probabilities);
-                        return;
+                if (!isApiFetchPending) {
+                    isApiFetchPending = true;
+                    try {
+                        const res = await fetch(`${API_URL}/predict`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ image: base64Image })
+                        });
+                        isApiFetchPending = false;
+                        if (res.ok) {
+                            const data = await res.json();
+                            document.getElementById('modelEngineLabel').textContent = '⚡ PyTorch Neural Model (Python)';
+                            displayResults(data.prediction, data.confidence, data.probabilities);
+                            return;
+                        }
+                    } catch (err) {
+                        isApiFetchPending = false;
                     }
-                } catch (err) {
-                    console.warn('Backend call failed, switching to local JS engine:', err);
                 }
             }
 
-            // Standalone Local JS Neural Feature Heuristic Engine (Fallback)
+            // High-speed Instant JS Fallback Stream (Runs at 60 FPS)
             document.getElementById('modelEngineLabel').textContent = '🌐 In-Browser JS Engine (Offline Fallback)';
             const localResult = predictLocalJS();
             displayResults(localResult.prediction, localResult.confidence, localResult.probabilities);
@@ -1567,7 +1669,7 @@
             let totalPixels = 0;
 
             for (let i = 0; i < 28 * 28; i++) {
-                const val = imgData[i * 4]; // R channel
+                const val = imgData[i * 4];
                 grid.push(val / 255.0);
                 if (val > 40) totalPixels++;
             }
@@ -1576,7 +1678,6 @@
                 return { prediction: 0, confidence: 0, probabilities: new Array(10).fill(0.1) };
             }
 
-            // Calculate feature metrics
             let minX = 28, maxX = 0, minY = 28, maxY = 0;
             let sumX = 0, sumY = 0;
 
@@ -1617,34 +1718,51 @@
             return { prediction: pred, confidence: maxP, probabilities: probs };
         }
 
-        // Update UI Display with Prediction Results
+        // Live Animated Results Display for All 10 Classes
+        let currentTopDigit = null;
         let lastAnnouncedDigit = null;
 
         function displayResults(digit, confidence, probabilities) {
-            document.getElementById('spotlightDigit').textContent = digit;
+            const digitEl = document.getElementById('spotlightDigit');
+            
+            // Pop animation on top prediction rank change
+            if (currentTopDigit !== digit) {
+                currentTopDigit = digit;
+                digitEl.classList.remove('pop');
+                void digitEl.offsetWidth; // Trigger reflow
+                digitEl.classList.add('pop');
+            }
+
+            digitEl.textContent = digit;
             const confPctStr = (confidence * 100).toFixed(1) + '%';
             document.getElementById('spotlightConf').textContent = confPctStr;
             document.getElementById('spotlightMeter').style.width = confPctStr;
 
+            // Live Update for all 10 classes simultaneously
             for (let i = 0; i < 10; i++) {
                 const row = document.getElementById(`prob-row-${i}`);
                 const fill = document.getElementById(`prob-fill-${i}`);
                 const pct = document.getElementById(`prob-pct-${i}`);
+                const pill = document.getElementById(`matrix-pill-${i}`);
+                const mFill = document.getElementById(`matrix-fill-${i}`);
 
                 const val = probabilities ? probabilities[i] : (i === digit ? confidence : 0.02);
                 const pctVal = (val * 100).toFixed(1) + '%';
 
                 fill.style.width = pctVal;
+                mFill.style.width = pctVal;
                 pct.textContent = pctVal;
 
                 if (i === digit) {
                     row.classList.add('top');
+                    pill.classList.add('active');
                 } else {
                     row.classList.remove('top');
+                    pill.classList.remove('active');
                 }
             }
 
-            if (confidence > 0.15 && lastAnnouncedDigit !== digit) {
+            if (!isDrawing && confidence > 0.15 && lastAnnouncedDigit !== digit) {
                 addHistoryItem(digit, confidence);
                 lastAnnouncedDigit = digit;
             }
@@ -1656,10 +1774,14 @@
             document.getElementById('spotlightMeter').style.width = '0%';
             for (let i = 0; i < 10; i++) {
                 const row = document.getElementById(`prob-row-${i}`);
+                const pill = document.getElementById(`matrix-pill-${i}`);
                 document.getElementById(`prob-fill-${i}`).style.width = '0%';
+                document.getElementById(`matrix-fill-${i}`).style.width = '0%';
                 document.getElementById(`prob-pct-${i}`).textContent = '0.0%';
                 row.classList.remove('top');
+                pill.classList.remove('active');
             }
+            currentTopDigit = null;
             lastAnnouncedDigit = null;
         }
 
@@ -1711,7 +1833,6 @@
             }
         }
 
-        // Initialize canvas
         updateCanvasTheme();
     </script>
 </body>
