@@ -107,7 +107,7 @@ model = CNN(
 # Load Trained Weights
 # ==========================================================
 
-MODEL_PATH = "FinalModel_98.94.pth"
+MODEL_PATH = "Models/FinalModel_98.94.pth"
 
 # Check whether model exists
 if os.path.exists(MODEL_PATH):
