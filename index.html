@@ -1320,8 +1320,12 @@
                 isDrawing = false;
                 ctx.closePath();
                 saveCanvasState();
+                
+                // Trigger final prediction with celebratory pop animation when drawing stops
+                triggerPrediction(true);
             }
         }
+
 
         // Mouse Events
         canvas.addEventListener('mousedown', startDrawing);
@@ -1632,9 +1636,9 @@
             });
         }
 
-        document.getElementById('predictBtn').addEventListener('click', triggerPrediction);
+        document.getElementById('predictBtn').addEventListener('click', () => triggerPrediction(true));
 
-        async function triggerPrediction() {
+        async function triggerPrediction(animatePop = false) {
             const base64Image = canvas.toDataURL('image/png');
 
             if (isBackendOnline) {
@@ -1650,24 +1654,24 @@
                         isApiFetchPending = false;
                         if (res.ok) {
                             const data = await res.json();
-                            displayResults(data.prediction, data.confidence, data.probabilities);
+                            displayResults(data.prediction, data.confidence, data.probabilities, animatePop);
                             return;
                         }
                     } catch (err) {
                         isApiFetchPending = false;
                     }
                 }
-                // Fast 60 FPS preview rendering during active mouse drag without label flickering
                 const localResult = predictLocalJS();
-                displayResults(localResult.prediction, localResult.confidence, localResult.probabilities);
+                displayResults(localResult.prediction, localResult.confidence, localResult.probabilities, animatePop);
                 return;
             }
 
             // Standalone Local JS Engine (Offline Fallback)
             document.getElementById('modelEngineLabel').textContent = '🌐 In-Browser JS Engine (Offline Fallback)';
             const localResult = predictLocalJS();
-            displayResults(localResult.prediction, localResult.confidence, localResult.probabilities);
+            displayResults(localResult.prediction, localResult.confidence, localResult.probabilities, animatePop);
         }
+
 
 
         // Fast Client-Side Standalone Inference Heuristic
@@ -1730,21 +1734,24 @@
         let currentTopDigit = null;
         let lastAnnouncedDigit = null;
 
-        function displayResults(digit, confidence, probabilities) {
+        function displayResults(digit, confidence, probabilities, animatePop = false) {
             const digitEl = document.getElementById('spotlightDigit');
             
-            // Pop animation on top prediction rank change
-            if (currentTopDigit !== digit) {
+            // Pop animation executes ONLY when drawing finishes or predict button is clicked (never while active drawing)
+            if (animatePop && currentTopDigit !== digit) {
                 currentTopDigit = digit;
                 digitEl.classList.remove('pop');
                 void digitEl.offsetWidth; // Trigger reflow
                 digitEl.classList.add('pop');
+            } else {
+                currentTopDigit = digit;
             }
 
             digitEl.textContent = digit;
             const confPctStr = (confidence * 100).toFixed(1) + '%';
             document.getElementById('spotlightConf').textContent = confPctStr;
             document.getElementById('spotlightMeter').style.width = confPctStr;
+
 
             // Live Update for all 10 classes simultaneously
             for (let i = 0; i < 10; i++) {
