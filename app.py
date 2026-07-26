@@ -172,53 +172,65 @@ transform = transforms.Compose([
 
 def preprocess_base64_image(base64_str: str) -> torch.Tensor:
     """
-    Converts Base64 canvas image into
-    normalized tensor suitable for the model.
+    Converts Base64 canvas image into normalized tensor for PyTorch MNIST model.
+    Uses if-else brightness auto-detection and 20x20 bounding-box centering.
     """
+    import numpy as np
 
-    # Frontend usually sends:
-    # data:image/png;base64,xxxxxxxx
-
-    # Remove the header part
+    # Remove data URL header if present
     if "," in base64_str:
         base64_str = base64_str.split(",")[1]
 
-    # Decode Base64 into bytes
+    # Decode Base64 into PIL Image (Grayscale)
     image_bytes = base64.b64decode(base64_str)
+    image = Image.open(io.BytesIO(image_bytes)).convert("L")
 
-    # Read bytes as image
-    image = Image.open(
-        io.BytesIO(image_bytes)
-    ).convert("L")       # Convert to grayscale
+    # If-else brightness check for background color:
+    img_np = np.array(image)
+    if img_np.mean() > 128:
+        # High brightness means light/white canvas -> Invert to black background + white digit
+        image = ImageOps.invert(image)
+        img_np = np.array(image)
+    else:
+        # Dark canvas -> Keep original black background + white digit
+        pass
 
-    # Canvas:
-    # White background
-    # Black digit
-    #
-    # MNIST:
-    # Black background
-    # White digit
-    #
-    # Therefore invert colors
+    # Bounding box crop & 20x20 centering inside 28x28 black matrix
+    nonzero_coords = np.argwhere(img_np > 30)
+    if len(nonzero_coords) > 0:
+        min_y, min_x = nonzero_coords.min(axis=0)
+        max_y, max_x = nonzero_coords.max(axis=0)
 
-   
-    image = ImageOps.invert(image)
+        pad = 10
+        min_y = max(0, min_y - pad)
+        min_x = max(0, min_x - pad)
+        max_y = min(img_np.shape[0], max_y + pad)
+        max_x = min(img_np.shape[1], max_x + pad)
 
-    # Apply resize + tensor + normalization
+        cropped = image.crop((min_x, min_y, max_x, max_y))
+        w, h = cropped.size
+        if w > h:
+            new_w = 20
+            new_h = max(1, int(20 * (h / w)))
+        else:
+            new_h = 20
+            new_w = max(1, int(20 * (w / h)))
+
+        resized_digit = cropped.resize((new_w, new_h), Image.Resampling.LANCZOS)
+        final_28x28 = Image.new("L", (28, 28), 0)
+        paste_x = (28 - new_w) // 2
+        paste_y = (28 - new_h) // 2
+        final_28x28.paste(resized_digit, (paste_x, paste_y))
+        image = final_28x28
+    else:
+        image = image.resize((28, 28), Image.Resampling.LANCZOS)
+
+    # Apply PyTorch transforms (ToTensor, Normalize 0.1307, 0.3081)
     tensor = transform(image)
+    tensor = tensor.unsqueeze(0)  # Add batch dimension (1, 1, 28, 28)
 
-    # Add batch dimension
-    #
-    # Before:
-    # (1,28,28)
-    #
-    # After:
-    # (1,1,28,28)
-
-    tensor = tensor.unsqueeze(0)
-
-    # Move tensor to CPU/GPU
     return tensor.to(device)
+
 
 
 # ==========================================================
