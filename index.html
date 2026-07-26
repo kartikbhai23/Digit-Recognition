@@ -1638,6 +1638,7 @@
             const base64Image = canvas.toDataURL('image/png');
 
             if (isBackendOnline) {
+                document.getElementById('modelEngineLabel').textContent = '⚡ PyTorch Neural Model (Python)';
                 if (!isApiFetchPending) {
                     isApiFetchPending = true;
                     try {
@@ -1649,7 +1650,6 @@
                         isApiFetchPending = false;
                         if (res.ok) {
                             const data = await res.json();
-                            document.getElementById('modelEngineLabel').textContent = '⚡ PyTorch Neural Model (Python)';
                             displayResults(data.prediction, data.confidence, data.probabilities);
                             return;
                         }
@@ -1657,13 +1657,18 @@
                         isApiFetchPending = false;
                     }
                 }
+                // Fast 60 FPS preview rendering during active mouse drag without label flickering
+                const localResult = predictLocalJS();
+                displayResults(localResult.prediction, localResult.confidence, localResult.probabilities);
+                return;
             }
 
-            // High-speed Instant JS Fallback Stream (Runs at 60 FPS)
+            // Standalone Local JS Engine (Offline Fallback)
             document.getElementById('modelEngineLabel').textContent = '🌐 In-Browser JS Engine (Offline Fallback)';
             const localResult = predictLocalJS();
             displayResults(localResult.prediction, localResult.confidence, localResult.probabilities);
         }
+
 
         // Fast Client-Side Standalone Inference Heuristic
         function predictLocalJS() {
