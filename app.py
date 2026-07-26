@@ -22,7 +22,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 # Import your custom trained model architecture
-from model import MNISTModel
+from model import CNN
 
 
 # ==========================================================
@@ -95,9 +95,11 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # ==========================================================
 
 # Create same architecture used during training
-model = MNISTModel(
-    hidden1=406,
-    hidden2=256
+model = CNN(
+    conv1_filters=64,
+    conv2_filters=32,
+    fc_units=256,
+    dropout_rate=0.3
 )
 
 
@@ -105,7 +107,7 @@ model = MNISTModel(
 # Load Trained Weights
 # ==========================================================
 
-MODEL_PATH = "best_model.pth"
+MODEL_PATH = "FinalModel_98.94.pth"
 
 # Check whether model exists
 if os.path.exists(MODEL_PATH):
