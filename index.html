@@ -1759,12 +1759,15 @@
         let isApiFetchPending = false;
         let animationFrameId = null;
 
+        let offlineConsecutiveCount = 0;
+
         async function checkBackendStatus() {
             const badge = document.getElementById('apiStatusBadge');
             const statusText = document.getElementById('apiStatusText');
             try {
-                const res = await fetch(`${API_URL}/`, { method: 'GET', signal: AbortSignal.timeout(1500) });
+                const res = await fetch(`${API_URL}/`, { method: 'GET', signal: AbortSignal.timeout(6000) });
                 if (res.ok) {
+                    offlineConsecutiveCount = 0;
                     isBackendOnline = true;
                     if (badge) badge.className = 'badge badge-status';
                     if (statusText) statusText.textContent = 'PyTorch API Online';
@@ -1773,16 +1776,21 @@
                     return;
                 }
             } catch (e) {
-                // Offline
+                // Network timeout or error
             }
-            isBackendOnline = false;
-            if (badge) badge.className = 'badge badge-status offline';
-            if (statusText) statusText.textContent = 'PyTorch Offline';
-            const label = document.getElementById('modelEngineLabel');
-            if (label) label.textContent = '⚠️ PyTorch Backend Disconnected';
+            
+            offlineConsecutiveCount++;
+            // Only mark offline if 2 consecutive checks fail to prevent blips on Render
+            if (offlineConsecutiveCount >= 2) {
+                isBackendOnline = false;
+                if (badge) badge.className = 'badge badge-status offline';
+                if (statusText) statusText.textContent = 'PyTorch Offline';
+                const label = document.getElementById('modelEngineLabel');
+                if (label) label.textContent = '⚠️ PyTorch Backend Disconnected';
+            }
         }
         checkBackendStatus();
-        setInterval(checkBackendStatus, 3000);
+        setInterval(checkBackendStatus, 10000);
 
         function triggerLiveStreamPrediction() {
             if (animationFrameId) cancelAnimationFrame(animationFrameId);
