@@ -994,23 +994,20 @@
                     </div>
                     <button class="btn-reset" id="resetBtn">Reset</button>
 
-                    <!-- Secondary Tools & Slider -->
-                    <div class="tools-bar" style="justify-content: space-between; width: 320px; margin-top: 10px;">
-                        <div class="brush-controls">
+                    <!-- Single Inline Controls Row -->
+                    <div class="tools-bar" style="display: flex; align-items: center; justify-content: space-between; width: 320px; gap: 6px; margin-top: 10px; flex-wrap: nowrap;">
+                        <div class="brush-controls" style="padding: 4px 8px; font-size: 0.78rem; gap: 6px;">
                             <i class="fa-solid fa-paint-brush"></i>
-                            <span>Width:</span>
-                            <input type="range" id="brushSlider" class="brush-slider" min="12" max="36" value="22">
-                            <span id="brushSizeVal" style="font-family:'JetBrains Mono'; color:#fff;">22px</span>
+                            <input type="range" id="brushSlider" class="brush-slider" min="12" max="36" value="22" style="width: 50px;">
+                            <span id="brushSizeVal" style="font-family:'JetBrains Mono'; color:#fff; font-size: 0.75rem;">22px</span>
                         </div>
 
-                        <div style="display: flex; gap: 8px;">
-                            <button class="btn-tool" id="uploadBtn">
-                                <i class="fa-solid fa-upload"></i> Upload
-                            </button>
-                            <button class="btn-tool btn-primary-action" id="predictBtn">
-                                <i class="fa-solid fa-wand-magic-sparkles"></i> Predict
-                            </button>
-                        </div>
+                        <button class="btn-tool" id="uploadBtn" style="padding: 6px 10px; font-size: 0.8rem;">
+                            <i class="fa-solid fa-upload"></i> Upload
+                        </button>
+                        <button class="btn-tool btn-primary-action" id="predictBtn" style="padding: 6px 12px; font-size: 0.8rem;">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Predict
+                        </button>
                     </div>
 
                     <!-- Live Streaming Option -->
