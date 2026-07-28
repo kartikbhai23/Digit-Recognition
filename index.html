@@ -936,7 +936,7 @@
                     <i class="fa-solid fa-brain"></i>
                 </div>
                 <div class="brand-title">
-                    <h1>NEURAL DIGIT RECOGNIZER</h1>
+                    <h1>Handwritten Number Classifier</h1>
                     <p>PyTorch Deep Learning & Real-time Vision Engine</p>
                 </div>
             </div>
@@ -970,23 +970,6 @@
             
             <!-- Left: Drawing Studio -->
             <div class="glass-card">
-                <div class="card-header">
-                    <div class="card-title">
-                        <i class="fa-solid fa-pen-ruler"></i>
-                        <span>Interactive Canvas Studio</span>
-                    </div>
-
-                    <div style="display: flex; gap: 12px; align-items: center;">
-                        <div class="toggle-container">
-                            <span>Live Streaming</span>
-                            <label class="switch">
-                                <input type="checkbox" id="autoPredictToggle" checked>
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="studio-container">
                     <div class="canvas-frame" id="canvasFrame">
                         <canvas id="canvas" width="320" height="320"></canvas>
@@ -995,10 +978,8 @@
                     </div>
                     <button class="btn-reset" id="resetBtn">Reset</button>
 
-
-
                     <!-- Secondary Tools & Slider -->
-                    <div class="tools-bar" style="justify-content: space-between;">
+                    <div class="tools-bar" style="justify-content: space-between; width: 320px; margin-top: 10px;">
                         <div class="brush-controls">
                             <i class="fa-solid fa-paint-brush"></i>
                             <span>Width:</span>
@@ -1016,20 +997,14 @@
                         </div>
                     </div>
 
-                    <!-- Preset Sample Digits -->
-                    <div class="preset-section">
-                        <div class="preset-label">Sample Presets (Click to Draw Digit onto Canvas):</div>
-                        <div class="preset-buttons">
-                            <button class="btn-preset" onclick="loadSample(0)">0</button>
-                            <button class="btn-preset" onclick="loadSample(1)">1</button>
-                            <button class="btn-preset" onclick="loadSample(2)">2</button>
-                            <button class="btn-preset" onclick="loadSample(3)">3</button>
-                            <button class="btn-preset" onclick="loadSample(4)">4</button>
-                            <button class="btn-preset" onclick="loadSample(5)">5</button>
-                            <button class="btn-preset" onclick="loadSample(6)">6</button>
-                            <button class="btn-preset" onclick="loadSample(7)">7</button>
-                            <button class="btn-preset" onclick="loadSample(8)">8</button>
-                            <button class="btn-preset" onclick="loadSample(9)">9</button>
+                    <!-- Live Streaming Option -->
+                    <div style="display: flex; gap: 12px; align-items: center; margin-top: 10px;">
+                        <div class="toggle-container">
+                            <span>Live Streaming</span>
+                            <label class="switch">
+                                <input type="checkbox" id="autoPredictToggle" checked>
+                                <span class="slider"></span>
+                            </label>
                         </div>
                     </div>
 
