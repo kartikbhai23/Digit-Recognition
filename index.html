@@ -268,11 +268,14 @@
 
         .canvas-frame {
             position: relative;
-            padding: 8px;
-            background: rgba(0, 0, 0, 0.4);
-            border: 2px solid rgba(0, 242, 254, 0.35);
-            border-radius: 16px;
-            box-shadow: 0 0 25px rgba(0, 242, 254, 0.15);
+            padding: 0;
+            background: #000000;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 18px;
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.8), 0 0 25px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+            width: 320px;
+            height: 320px;
             transition: all 0.3s ease;
         }
 
@@ -282,11 +285,70 @@
             box-shadow: 0 0 30px rgba(0, 242, 254, 0.3);
         }
 
+        .grid-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.12) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.12) 1px, transparent 1px);
+            background-size: 11.428px 11.428px;
+            z-index: 2;
+        }
+
+        .canvas-cursor {
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            border: 1.5px solid rgba(255, 255, 255, 0.85);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            display: none;
+            z-index: 3;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3), inset 0 0 4px rgba(255, 255, 255, 0.2);
+            transition: width 0.08s ease, height 0.08s ease;
+        }
+
         #canvas {
-            border-radius: 10px;
-            cursor: crosshair;
+            border-radius: 18px;
+            cursor: none;
             display: block;
             touch-action: none;
+        }
+
+        .btn-reset {
+            width: 320px;
+            padding: 13px 24px;
+            background: linear-gradient(90deg, #38bdf8 0%, #00e5ff 100%);
+            color: #ffffff;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(0, 229, 255, 0.4);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+
+        .btn-reset:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 229, 255, 0.6);
+            background: linear-gradient(90deg, #00e5ff 0%, #38bdf8 100%);
+        }
+
+        .btn-reset:active {
+            transform: translateY(1px);
+            box-shadow: 0 3px 12px rgba(0, 229, 255, 0.3);
         }
 
         /* Tool Controls */
@@ -690,52 +752,64 @@
             line-height: 1.3;
         }
 
-        /* Probability Bars Grid */
-        .prob-section {
+        /* Custom Probability Card matching Dark Theme */
+        .prob-card-custom {
+            background: rgba(18, 22, 41, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 16px;
+            padding: 14px 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .prob-grid-custom {
             display: flex;
             flex-direction: column;
             gap: 8px;
         }
 
-        .prob-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .prob-row {
+        .prob-row-custom {
             display: flex;
             align-items: center;
-            gap: 12px;
-            font-size: 0.88rem;
-            transition: transform 0.15s ease;
+            gap: 14px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 6px 12px;
+            transition: all 0.2s ease;
         }
 
-        .prob-digit {
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 700;
-            width: 18px;
-            color: var(--text-muted);
+        .prob-digit-custom {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #38bdf8;
+            width: 22px;
             text-align: center;
-            transition: color 0.15s ease, font-size 0.15s ease;
         }
 
-        .prob-bar-bg {
+        .prob-track-custom {
             flex: 1;
-            height: 16px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 8px;
+            height: 24px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
             overflow: hidden;
             position: relative;
         }
 
-        .prob-bar-fill {
+        .prob-fill-custom {
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, #3b82f6, #00f2fe);
-            border-radius: 8px;
-            transition: width 0.12s cubic-bezier(0.1, 0.9, 0.2, 1), background 0.2s ease, box-shadow 0.2s ease;
+            background: #4ab558;
+            border-radius: 5px;
+            transition: width 0.25s cubic-bezier(0.1, 0.9, 0.2, 1);
+            box-shadow: 0 0 10px rgba(74, 181, 88, 0.3);
         }
 
         .prob-row.top {
@@ -903,9 +977,6 @@
                     </div>
 
                     <div style="display: flex; gap: 12px; align-items: center;">
-                        <button class="btn-tool" id="themeToggleBtn" style="padding: 4px 10px; font-size: 0.8rem;">
-                            📄 Paper Theme
-                        </button>
                         <div class="toggle-container">
                             <span>Live Streaming</span>
                             <label class="switch">
@@ -917,28 +988,14 @@
                 </div>
 
                 <div class="studio-container">
-                    <div class="canvas-frame paper-theme" id="canvasFrame">
+                    <div class="canvas-frame" id="canvasFrame">
                         <canvas id="canvas" width="320" height="320"></canvas>
+                        <div class="grid-overlay" id="gridOverlay"></div>
+                        <div class="canvas-cursor" id="canvasCursor"></div>
                     </div>
+                    <button class="btn-reset" id="resetBtn">Reset</button>
 
-                    <!-- Primary Action Buttons -->
-                    <div class="tools-bar">
-                        <button class="btn-tool active" id="drawBtn">
-                            <i class="fa-solid fa-pencil"></i> Draw
-                        </button>
-                        <button class="btn-tool" id="eraseBtn">
-                            <i class="fa-solid fa-eraser"></i> Erase
-                        </button>
-                        <button class="btn-tool" id="undoBtn" title="Undo Stroke">
-                            <i class="fa-solid fa-rotate-left"></i> Undo
-                        </button>
-                        <button class="btn-tool" id="redoBtn" title="Redo Stroke">
-                            <i class="fa-solid fa-rotate-right"></i> Redo
-                        </button>
-                        <button class="btn-tool btn-danger" id="clearBtn">
-                            <i class="fa-solid fa-trash-can"></i> Clear
-                        </button>
-                    </div>
+
 
                     <!-- Secondary Tools & Slider -->
                     <div class="tools-bar" style="justify-content: space-between;">
@@ -1010,46 +1067,18 @@
                         </div>
                     </div>
 
-                    <!-- 10-Class Live Radar Matrix Grid -->
-                    <div class="live-matrix-section">
-                        <div class="card-title" style="font-size: 0.82rem; color: var(--text-muted);">
-                            <span>Live 10-Class Neural Radar:</span>
-                        </div>
-                        <div class="live-matrix-grid" id="matrixGrid">
-                            <!-- JS populated pills 0-9 -->
-                        </div>
-                    </div>
-
-                    <!-- 28x28 Preprocessing View -->
-                    <div class="preview-section">
-                        <div class="preview-canvas-box">
-                            <canvas id="previewCanvas" width="28" height="28"></canvas>
-                        </div>
-                        <div class="preview-info">
-                            <h4>MNIST 28×28 Neural Matrix</h4>
-                            <p>Live cropped & centered 28x28 grayscale input sent to neural net.</p>
-                        </div>
-                    </div>
-
-                    <!-- Probability Bars Grid -->
-                    <div class="prob-section">
-                        <div class="card-title" style="font-size: 0.85rem; color: var(--text-muted);">
-                            <span>Live Probability Distribution Across All Digits:</span>
-                        </div>
-                        <div class="prob-grid" id="probGrid">
+                    <!-- Probability Bar Card (Matching Screenshot) -->
+                    <div class="prob-card-custom">
+                        <div class="prob-grid-custom" id="probGrid">
                             <!-- JS populated rows for 0-9 -->
                         </div>
                     </div>
 
-                    <!-- History Strip -->
-                    <div class="history-section">
-                        <div class="card-title" style="font-size: 0.82rem; color: var(--text-muted);">
-                            <span>Recent Predictions Log:</span>
-                        </div>
-                        <div class="history-list" id="historyList">
-                            <span style="font-size: 0.8rem; color: var(--text-muted); font-style: italic;">No drawings yet. Draw a digit to start history.</span>
-                        </div>
-                    </div>
+
+
+
+
+
 
                 </div>
             </div>
@@ -1201,50 +1230,50 @@
         // ==========================================
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
-        const previewCanvas = document.getElementById('previewCanvas');
+        const previewCanvas = document.getElementById('previewCanvas') || document.createElement('canvas');
+        previewCanvas.width = 28;
+        previewCanvas.height = 28;
         const previewCtx = previewCanvas.getContext('2d');
+        const canvasCursor = document.getElementById('canvasCursor');
 
         let isDrawing = false;
         let currentTool = 'draw';
-        let isPaperTheme = true;
+        let isPaperTheme = false;
         let brushSize = 22;
 
-        let canvasBgColor = '#ffffff';
-        let strokeColor = '#000000';
+        let canvasBgColor = '#000000';
+        let strokeColor = '#ffffff';
 
         let undoStack = [];
         let redoStack = [];
         const MAX_HISTORY = 20;
 
-        function updateCanvasTheme() {
-            const frame = document.getElementById('canvasFrame');
-            const btn = document.getElementById('themeToggleBtn');
-            if (isPaperTheme) {
-                canvasBgColor = '#ffffff';
-                strokeColor = '#000000';
-                frame.classList.add('paper-theme');
-                btn.textContent = '📄 Paper Theme';
-            } else {
-                canvasBgColor = '#000000';
-                strokeColor = '#ffffff';
-                frame.classList.remove('paper-theme');
-                btn.textContent = '🌙 Cyber Theme';
+        const GRID_SIZE = 28;
+        let pixelGrid = Array.from({ length: GRID_SIZE }, () => new Float32Array(GRID_SIZE));
+
+        function renderPixelGrid() {
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            const cellW = canvas.width / GRID_SIZE;
+            const cellH = canvas.height / GRID_SIZE;
+
+            for (let y = 0; y < GRID_SIZE; y++) {
+                for (let x = 0; x < GRID_SIZE; x++) {
+                    const v = pixelGrid[y][x];
+                    if (v > 0) {
+                        const g = Math.round(v * 255);
+                        ctx.fillStyle = `rgb(${g},${g},${g})`;
+                        ctx.fillRect(x * cellW, y * cellH, cellW + 0.5, cellH + 0.5);
+                    }
+                }
             }
-            initMainCanvas();
         }
 
-        document.getElementById('themeToggleBtn').addEventListener('click', () => {
-            isPaperTheme = !isPaperTheme;
-            updateCanvasTheme();
-        });
-
         function initMainCanvas() {
-            ctx.fillStyle = canvasBgColor;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-            ctx.strokeStyle = strokeColor;
-            ctx.lineWidth = brushSize;
+            for (let y = 0; y < GRID_SIZE; y++) {
+                pixelGrid[y].fill(0);
+            }
+            renderPixelGrid();
             undoStack = [];
             redoStack = [];
             saveCanvasState();
@@ -1253,12 +1282,14 @@
 
         function saveCanvasState() {
             if (undoStack.length >= MAX_HISTORY) undoStack.shift();
-            undoStack.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+            const gridCopy = pixelGrid.map(row => new Float32Array(row));
+            undoStack.push(gridCopy);
             redoStack = [];
         }
 
-        function restoreState(imageData) {
-            ctx.putImageData(imageData, 0, 0);
+        function restoreState(gridCopy) {
+            pixelGrid = gridCopy.map(row => new Float32Array(row));
+            renderPixelGrid();
             updatePreview();
             if (document.getElementById('autoPredictToggle').checked) {
                 triggerLiveStreamPrediction();
@@ -1275,24 +1306,61 @@
             };
         }
 
+        let lastPos = null;
+
+        function paintGridAt(cx, cy, isErase = false) {
+            const cellW = canvas.width / GRID_SIZE;
+            const cellH = canvas.height / GRID_SIZE;
+            const gx = (cx / cellW) - 0.5;
+            const gy = (cy / cellH) - 0.5;
+
+            // Wider, softer falloff radius
+            const radius = Math.max(1.2, (brushSize / 22) * 2.0);
+
+            const minX = Math.max(0, Math.floor(gx - radius));
+            const maxX = Math.min(GRID_SIZE - 1, Math.ceil(gx + radius));
+            const minY = Math.max(0, Math.floor(gy - radius));
+            const maxY = Math.min(GRID_SIZE - 1, Math.ceil(gy + radius));
+
+            for (let y = minY; y <= maxY; y++) {
+                for (let x = minX; x <= maxX; x++) {
+                    const dist = Math.hypot(x - gx, y - gy);
+                    if (dist <= radius) {
+                        // Smooth light falloff curve
+                        const factor = Math.pow(Math.cos((dist / radius) * (Math.PI / 2)), 1.5);
+                        if (isErase) {
+                            pixelGrid[y][x] = Math.max(0, pixelGrid[y][x] - factor * 0.5);
+                        } else {
+                            // Light brush increment per pass
+                            pixelGrid[y][x] = Math.min(1.0, pixelGrid[y][x] + factor * 0.22);
+                        }
+                    }
+                }
+            }
+            renderPixelGrid();
+        }
+
+        function strokeLine(p1, p2, isErase = false) {
+            const dist = Math.hypot(p2.x - p1.x, p2.y - p1.y);
+            const steps = Math.max(1, Math.ceil(dist / 6));
+            for (let i = 0; i <= steps; i++) {
+                const t = i / steps;
+                const x = p1.x + (p2.x - p1.x) * t;
+                const y = p1.y + (p2.y - p1.y) * t;
+                paintGridAt(x, y, isErase);
+            }
+        }
+
         function startDrawing(e) {
             const isRightClick = (e.button === 2);
             if (isRightClick) e.preventDefault();
 
             isDrawing = true;
             const pos = getCanvasCoords(e);
+            lastPos = pos;
 
             const isErasing = (currentTool === 'erase' || isRightClick);
-            ctx.strokeStyle = isErasing ? canvasBgColor : strokeColor;
-            ctx.lineWidth = isErasing ? brushSize * 1.6 : brushSize;
-
-            ctx.beginPath();
-            ctx.arc(pos.x, pos.y, ctx.lineWidth / 2, 0, Math.PI * 2);
-            ctx.fillStyle = ctx.strokeStyle;
-            ctx.fill();
-
-            ctx.beginPath();
-            ctx.moveTo(pos.x, pos.y);
+            paintGridAt(pos.x, pos.y, isErasing);
         }
 
         function draw(e) {
@@ -1301,15 +1369,17 @@
             if (e.buttons === 2) e.preventDefault();
 
             const pos = getCanvasCoords(e);
-            ctx.strokeStyle = isRightClick ? canvasBgColor : strokeColor;
-            ctx.lineWidth = isRightClick ? brushSize * 1.6 : brushSize;
+            const isErasing = (currentTool === 'erase' || isRightClick);
 
-            ctx.lineTo(pos.x, pos.y);
-            ctx.stroke();
+            if (lastPos) {
+                strokeLine(lastPos, pos, isErasing);
+            } else {
+                paintGridAt(pos.x, pos.y, isErasing);
+            }
+            lastPos = pos;
 
             updatePreview();
 
-            // REAL-TIME 60 FPS LIVE ANIMATION STREAM WHILE DRAWING
             if (document.getElementById('autoPredictToggle').checked) {
                 triggerLiveStreamPrediction();
             }
@@ -1318,14 +1388,45 @@
         function stopDrawing() {
             if (isDrawing) {
                 isDrawing = false;
-                ctx.closePath();
+                lastPos = null;
                 saveCanvasState();
-                
-                // Trigger final prediction with celebratory pop animation when drawing stops
-                triggerPrediction(true);
+                if (document.getElementById('autoPredictToggle').checked) {
+                    triggerPrediction(true);
+                }
             }
         }
 
+
+        // Cursor tracking
+        function updateCursorPos(e) {
+            const frameEl = document.getElementById('canvasFrame');
+            if (!frameEl || !canvasCursor) return;
+            const frameRect = frameEl.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+            const x = clientX - frameRect.left;
+            const y = clientY - frameRect.top;
+
+            if (x >= 0 && x <= frameRect.width && y >= 0 && y <= frameRect.height) {
+                canvasCursor.style.display = 'block';
+                canvasCursor.style.left = x + 'px';
+                canvasCursor.style.top = y + 'px';
+                const diam = Math.max(16, brushSize * (frameRect.width / canvas.width));
+                canvasCursor.style.width = diam + 'px';
+                canvasCursor.style.height = diam + 'px';
+            } else {
+                canvasCursor.style.display = 'none';
+            }
+        }
+
+        const frameEl = document.getElementById('canvasFrame');
+        if (frameEl) {
+            frameEl.addEventListener('mousemove', updateCursorPos);
+            frameEl.addEventListener('mouseleave', () => { if (canvasCursor) canvasCursor.style.display = 'none'; });
+            frameEl.addEventListener('touchmove', updateCursorPos);
+            frameEl.addEventListener('touchend', () => { if (canvasCursor) canvasCursor.style.display = 'none'; });
+        }
 
         // Mouse Events
         canvas.addEventListener('mousedown', startDrawing);
@@ -1339,49 +1440,73 @@
         canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e); });
         canvas.addEventListener('touchend', (e) => { e.preventDefault(); stopDrawing(); });
 
+        // Reset Button
+        const resetBtn = document.getElementById('resetBtn');
+        if (resetBtn) {
+            resetBtn.addEventListener('click', () => {
+                initMainCanvas();
+                resetResults();
+            });
+        }
+
         // Tool Controls
         const drawBtn = document.getElementById('drawBtn');
         const eraseBtn = document.getElementById('eraseBtn');
         const brushSlider = document.getElementById('brushSlider');
         const brushSizeVal = document.getElementById('brushSizeVal');
 
-        drawBtn.addEventListener('click', () => {
-            currentTool = 'draw';
-            drawBtn.classList.add('active');
-            eraseBtn.classList.remove('active');
-        });
+        if (drawBtn) {
+            drawBtn.addEventListener('click', () => {
+                currentTool = 'draw';
+                drawBtn.classList.add('active');
+                if (eraseBtn) eraseBtn.classList.remove('active');
+            });
+        }
 
-        eraseBtn.addEventListener('click', () => {
-            currentTool = 'erase';
-            eraseBtn.classList.add('active');
-            drawBtn.classList.remove('active');
-        });
+        if (eraseBtn) {
+            eraseBtn.addEventListener('click', () => {
+                currentTool = 'erase';
+                eraseBtn.classList.add('active');
+                if (drawBtn) drawBtn.classList.remove('active');
+            });
+        }
 
-        brushSlider.addEventListener('input', (e) => {
-            brushSize = parseInt(e.target.value);
-            brushSizeVal.textContent = brushSize + 'px';
-        });
+        if (brushSlider && brushSizeVal) {
+            brushSlider.addEventListener('input', (e) => {
+                brushSize = parseInt(e.target.value);
+                brushSizeVal.textContent = brushSize + 'px';
+            });
+        }
 
-        document.getElementById('clearBtn').addEventListener('click', () => {
-            initMainCanvas();
-            resetResults();
-        });
+        const clearBtn = document.getElementById('clearBtn');
+        if (clearBtn) {
+            clearBtn.addEventListener('click', () => {
+                initMainCanvas();
+                resetResults();
+            });
+        }
 
-        document.getElementById('undoBtn').addEventListener('click', () => {
-            if (undoStack.length > 1) {
-                redoStack.push(undoStack.pop());
-                const prevState = undoStack[undoStack.length - 1];
-                restoreState(prevState);
-            }
-        });
+        const undoBtn = document.getElementById('undoBtn');
+        if (undoBtn) {
+            undoBtn.addEventListener('click', () => {
+                if (undoStack.length > 1) {
+                    redoStack.push(undoStack.pop());
+                    const prevState = undoStack[undoStack.length - 1];
+                    restoreState(prevState);
+                }
+            });
+        }
 
-        document.getElementById('redoBtn').addEventListener('click', () => {
-            if (redoStack.length > 0) {
-                const nextState = redoStack.pop();
-                undoStack.push(nextState);
-                restoreState(nextState);
-            }
-        });
+        const redoBtn = document.getElementById('redoBtn');
+        if (redoBtn) {
+            redoBtn.addEventListener('click', () => {
+                if (redoStack.length > 0) {
+                    const nextState = redoStack.pop();
+                    undoStack.push(nextState);
+                    restoreState(nextState);
+                }
+            });
+        }
 
         // Upload Image
         const uploadBtn = document.getElementById('uploadBtn');
@@ -1396,14 +1521,39 @@
                 reader.onload = (evt) => {
                     const img = new Image();
                     img.onload = () => {
-                        ctx.fillStyle = canvasBgColor;
-                        ctx.fillRect(0, 0, canvas.width, canvas.height);
-                        
+                        const tempC = document.createElement('canvas');
+                        tempC.width = canvas.width;
+                        tempC.height = canvas.height;
+                        const tCtx = tempC.getContext('2d');
+                        tCtx.fillStyle = '#000000';
+                        tCtx.fillRect(0, 0, tempC.width, tempC.height);
+
                         const scale = Math.min(canvas.width / img.width, canvas.height / img.height) * 0.8;
                         const x = (canvas.width - img.width * scale) / 2;
                         const y = (canvas.height - img.height * scale) / 2;
-                        
-                        ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+                        tCtx.drawImage(img, x, y, img.width * scale, img.height * scale);
+
+                        const cellW = tempC.width / GRID_SIZE;
+                        const cellH = tempC.height / GRID_SIZE;
+                        const imgData = tCtx.getImageData(0, 0, tempC.width, tempC.height).data;
+
+                        for (let ly = 0; ly < GRID_SIZE; ly++) {
+                            for (let lx = 0; lx < GRID_SIZE; lx++) {
+                                const startX = Math.floor(lx * cellW);
+                                const startY = Math.floor(ly * cellH);
+                                let sum = 0, count = 0;
+                                for (let py = startY; py < startY + cellH; py++) {
+                                    for (let px = startX; px < startX + cellW; px++) {
+                                        const idx = (py * tempC.width + px) * 4;
+                                        sum += imgData[idx];
+                                        count++;
+                                    }
+                                }
+                                pixelGrid[ly][lx] = Math.min(1.0, (sum / count) / 255);
+                            }
+                        }
+
+                        renderPixelGrid();
                         saveCanvasState();
                         updatePreview();
                         triggerPrediction();
@@ -1491,69 +1641,97 @@
         // 3. SAMPLE PRESETS DRAWING GENERATOR
         // ==========================================
         function loadSample(digit) {
-            ctx.fillStyle = canvasBgColor;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.strokeStyle = strokeColor;
-            ctx.lineWidth = 24;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
+            const tempC = document.createElement('canvas');
+            tempC.width = canvas.width;
+            tempC.height = canvas.height;
+            const tCtx = tempC.getContext('2d');
 
-            const cx = canvas.width / 2;
-            const cy = canvas.height / 2;
+            tCtx.fillStyle = '#000000';
+            tCtx.fillRect(0, 0, tempC.width, tempC.height);
+            tCtx.strokeStyle = '#ffffff';
+            tCtx.lineWidth = 24;
+            tCtx.lineCap = 'round';
+            tCtx.lineJoin = 'round';
+            tCtx.shadowColor = '#ffffff';
+            tCtx.shadowBlur = 8;
 
-            ctx.beginPath();
+            const cx = tempC.width / 2;
+            const cy = tempC.height / 2;
+
+            tCtx.beginPath();
             switch (digit) {
                 case 0:
-                    ctx.ellipse(cx, cy, 55, 85, 0, 0, Math.PI * 2);
+                    tCtx.ellipse(cx, cy, 55, 85, 0, 0, Math.PI * 2);
                     break;
                 case 1:
-                    ctx.moveTo(cx - 15, cy - 75);
-                    ctx.lineTo(cx, cy - 85);
-                    ctx.lineTo(cx, cy + 85);
+                    tCtx.moveTo(cx - 15, cy - 75);
+                    tCtx.lineTo(cx, cy - 85);
+                    tCtx.lineTo(cx, cy + 85);
                     break;
                 case 2:
-                    ctx.arc(cx, cy - 40, 45, Math.PI * 0.9, Math.PI * 2.1);
-                    ctx.lineTo(cx - 45, cy + 75);
-                    ctx.lineTo(cx + 50, cy + 75);
+                    tCtx.arc(cx, cy - 40, 45, Math.PI * 0.9, Math.PI * 2.1);
+                    tCtx.lineTo(cx - 45, cy + 75);
+                    tCtx.lineTo(cx + 50, cy + 75);
                     break;
                 case 3:
-                    ctx.arc(cx - 5, cy - 35, 42, Math.PI * 1.2, Math.PI * 0.4);
-                    ctx.arc(cx - 5, cy + 35, 42, Math.PI * 1.6, Math.PI * 0.8);
+                    tCtx.arc(cx - 5, cy - 35, 42, Math.PI * 1.2, Math.PI * 0.4);
+                    tCtx.arc(cx - 5, cy + 35, 42, Math.PI * 1.6, Math.PI * 0.8);
                     break;
                 case 4:
-                    ctx.moveTo(cx + 25, cy + 75);
-                    ctx.lineTo(cx + 25, cy - 75);
-                    ctx.lineTo(cx - 50, cy + 15);
-                    ctx.lineTo(cx + 60, cy + 15);
+                    tCtx.moveTo(cx + 25, cy + 75);
+                    tCtx.lineTo(cx + 25, cy - 75);
+                    tCtx.lineTo(cx - 50, cy + 15);
+                    tCtx.lineTo(cx + 60, cy + 15);
                     break;
                 case 5:
-                    ctx.moveTo(cx + 45, cy - 75);
-                    ctx.lineTo(cx - 35, cy - 75);
-                    ctx.lineTo(cx - 40, cy - 10);
-                    ctx.arc(cx - 5, cy + 30, 45, Math.PI * 1.3, Math.PI * 0.7);
+                    tCtx.moveTo(cx + 45, cy - 75);
+                    tCtx.lineTo(cx - 35, cy - 75);
+                    tCtx.lineTo(cx - 40, cy - 10);
+                    tCtx.arc(cx - 5, cy + 30, 45, Math.PI * 1.3, Math.PI * 0.7);
                     break;
                 case 6:
-                    ctx.arc(cx, cy + 30, 45, 0, Math.PI * 2);
-                    ctx.moveTo(cx + 35, cy + 10);
-                    ctx.lineTo(cx - 15, cy - 75);
+                    tCtx.arc(cx, cy + 30, 45, 0, Math.PI * 2);
+                    tCtx.moveTo(cx + 35, cy + 10);
+                    tCtx.lineTo(cx - 15, cy - 75);
                     break;
                 case 7:
-                    ctx.moveTo(cx - 55, cy - 75);
-                    ctx.lineTo(cx + 55, cy - 75);
-                    ctx.lineTo(cx - 25, cy + 75);
+                    tCtx.moveTo(cx - 55, cy - 75);
+                    tCtx.lineTo(cx + 55, cy - 75);
+                    tCtx.lineTo(cx - 25, cy + 75);
                     break;
                 case 8:
-                    ctx.arc(cx, cy - 35, 38, 0, Math.PI * 2);
-                    ctx.arc(cx, cy + 35, 45, 0, Math.PI * 2);
+                    tCtx.arc(cx, cy - 35, 38, 0, Math.PI * 2);
+                    tCtx.arc(cx, cy + 35, 45, 0, Math.PI * 2);
                     break;
                 case 9:
-                    ctx.arc(cx, cy - 25, 45, 0, Math.PI * 2);
-                    ctx.moveTo(cx + 40, cy - 25);
-                    ctx.lineTo(cx + 15, cy + 75);
+                    tCtx.arc(cx, cy - 25, 45, 0, Math.PI * 2);
+                    tCtx.moveTo(cx + 40, cy - 25);
+                    tCtx.lineTo(cx + 15, cy + 75);
                     break;
             }
-            ctx.stroke();
+            tCtx.stroke();
 
+            const cellW = tempC.width / GRID_SIZE;
+            const cellH = tempC.height / GRID_SIZE;
+            const imgData = tCtx.getImageData(0, 0, tempC.width, tempC.height).data;
+
+            for (let ly = 0; ly < GRID_SIZE; ly++) {
+                for (let lx = 0; lx < GRID_SIZE; lx++) {
+                    const startX = Math.floor(lx * cellW);
+                    const startY = Math.floor(ly * cellH);
+                    let sum = 0, count = 0;
+                    for (let py = startY; py < startY + cellH; py++) {
+                        for (let px = startX; px < startX + cellW; px++) {
+                            const idx = (py * tempC.width + px) * 4;
+                            sum += imgData[idx];
+                            count++;
+                        }
+                    }
+                    pixelGrid[ly][lx] = Math.min(1.0, (sum / count) / 255);
+                }
+            }
+
+            renderPixelGrid();
             saveCanvasState();
             updatePreview();
             triggerPrediction();
@@ -1567,34 +1745,20 @@
         const matrixGrid = document.getElementById('matrixGrid');
 
         function initUIContainers() {
-            probGrid.innerHTML = '';
-            matrixGrid.innerHTML = '';
-
-            for (let i = 0; i < 10; i++) {
-                // Prob Row
-                const row = document.createElement('div');
-                row.className = 'prob-row';
-                row.id = `prob-row-${i}`;
-                row.innerHTML = `
-                    <span class="prob-digit">${i}</span>
-                    <div class="prob-bar-bg">
-                        <div class="prob-bar-fill" id="prob-fill-${i}"></div>
-                    </div>
-                    <span class="prob-pct" id="prob-pct-${i}">0.0%</span>
-                `;
-                probGrid.appendChild(row);
-
-                // Matrix Pill
-                const pill = document.createElement('div');
-                pill.className = 'matrix-pill';
-                pill.id = `matrix-pill-${i}`;
-                pill.innerHTML = `
-                    <span class="matrix-digit">${i}</span>
-                    <div class="matrix-bar-mini">
-                        <div class="matrix-fill-mini" id="matrix-fill-${i}"></div>
-                    </div>
-                `;
-                matrixGrid.appendChild(pill);
+            if (probGrid) {
+                probGrid.innerHTML = '';
+                for (let i = 0; i < 10; i++) {
+                    const row = document.createElement('div');
+                    row.className = 'prob-row-custom';
+                    row.id = `prob-row-${i}`;
+                    row.innerHTML = `
+                        <span class="prob-digit-custom">${i}</span>
+                        <div class="prob-track-custom">
+                            <div class="prob-fill-custom" id="prob-fill-${i}"></div>
+                        </div>
+                    `;
+                    probGrid.appendChild(row);
+                }
             }
         }
         initUIContainers();
@@ -1614,18 +1778,20 @@
                 const res = await fetch(`${API_URL}/`, { method: 'GET', signal: AbortSignal.timeout(1500) });
                 if (res.ok) {
                     isBackendOnline = true;
-                    badge.className = 'badge badge-status';
-                    statusText.textContent = 'PyTorch API Online';
-                    document.getElementById('modelEngineLabel').textContent = '⚡ PyTorch Neural Model (Python)';
+                    if (badge) badge.className = 'badge badge-status';
+                    if (statusText) statusText.textContent = 'PyTorch API Online';
+                    const label = document.getElementById('modelEngineLabel');
+                    if (label) label.textContent = '⚡ PyTorch Neural Model (Python)';
                     return;
                 }
             } catch (e) {
                 // Offline
             }
             isBackendOnline = false;
-            badge.className = 'badge badge-status offline';
-            statusText.textContent = 'PyTorch Offline';
-            document.getElementById('modelEngineLabel').textContent = '⚠️ PyTorch Backend Disconnected';
+            if (badge) badge.className = 'badge badge-status offline';
+            if (statusText) statusText.textContent = 'PyTorch Offline';
+            const label = document.getElementById('modelEngineLabel');
+            if (label) label.textContent = '⚠️ PyTorch Backend Disconnected';
         }
         checkBackendStatus();
         setInterval(checkBackendStatus, 3000);
@@ -1653,13 +1819,15 @@
                     isApiFetchPending = false;
                     if (res.ok) {
                         const data = await res.json();
-                        document.getElementById('modelEngineLabel').textContent = '⚡ PyTorch Neural Model (Python)';
+                        const label = document.getElementById('modelEngineLabel');
+                        if (label) label.textContent = '⚡ PyTorch Neural Model (Python)';
                         displayResults(data.prediction, data.confidence, data.probabilities, animatePop);
                         return;
                     }
                 } catch (err) {
                     isApiFetchPending = false;
-                    document.getElementById('modelEngineLabel').textContent = '⚠️ PyTorch Server Offline (Start app.py on port 8000)';
+                    const label = document.getElementById('modelEngineLabel');
+                    if (label) label.textContent = '⚠️ PyTorch Server Offline (Start app.py on port 8000)';
                 }
             }
         }
@@ -1671,21 +1839,23 @@
         function displayResults(digit, confidence, probabilities, animatePop = false) {
             const digitEl = document.getElementById('spotlightDigit');
             
-            // Pop animation executes ONLY when drawing finishes or predict button is clicked (never while active drawing)
-            if (animatePop && currentTopDigit !== digit) {
-                currentTopDigit = digit;
-                digitEl.classList.remove('pop');
-                void digitEl.offsetWidth; // Trigger reflow
-                digitEl.classList.add('pop');
-            } else {
-                currentTopDigit = digit;
+            if (digitEl) {
+                if (animatePop && currentTopDigit !== digit) {
+                    currentTopDigit = digit;
+                    digitEl.classList.remove('pop');
+                    void digitEl.offsetWidth; // Trigger reflow
+                    digitEl.classList.add('pop');
+                } else {
+                    currentTopDigit = digit;
+                }
+                digitEl.textContent = digit;
             }
 
-            digitEl.textContent = digit;
             const confPctStr = (confidence * 100).toFixed(1) + '%';
-            document.getElementById('spotlightConf').textContent = confPctStr;
-            document.getElementById('spotlightMeter').style.width = confPctStr;
-
+            const spotConf = document.getElementById('spotlightConf');
+            const spotMeter = document.getElementById('spotlightMeter');
+            if (spotConf) spotConf.textContent = confPctStr;
+            if (spotMeter) spotMeter.style.width = confPctStr;
 
             // Live Update for all 10 classes simultaneously
             for (let i = 0; i < 10; i++) {
@@ -1698,16 +1868,18 @@
                 const val = probabilities ? probabilities[i] : (i === digit ? confidence : 0.02);
                 const pctVal = (val * 100).toFixed(1) + '%';
 
-                fill.style.width = pctVal;
-                mFill.style.width = pctVal;
-                pct.textContent = pctVal;
+                if (fill) fill.style.width = pctVal;
+                if (mFill) mFill.style.width = pctVal;
+                if (pct) pct.textContent = pctVal;
 
-                if (i === digit) {
-                    row.classList.add('top');
-                    pill.classList.add('active');
-                } else {
-                    row.classList.remove('top');
-                    pill.classList.remove('active');
+                if (row) {
+                    if (i === digit) row.classList.add('top');
+                    else row.classList.remove('top');
+                }
+
+                if (pill) {
+                    if (i === digit) pill.classList.add('active');
+                    else pill.classList.remove('active');
                 }
             }
 
@@ -1718,17 +1890,25 @@
         }
 
         function resetResults() {
-            document.getElementById('spotlightDigit').textContent = '-';
-            document.getElementById('spotlightConf').textContent = '0%';
-            document.getElementById('spotlightMeter').style.width = '0%';
+            const spotDigit = document.getElementById('spotlightDigit');
+            const spotConf = document.getElementById('spotlightConf');
+            const spotMeter = document.getElementById('spotlightMeter');
+            if (spotDigit) spotDigit.textContent = '-';
+            if (spotConf) spotConf.textContent = '0%';
+            if (spotMeter) spotMeter.style.width = '0%';
+
             for (let i = 0; i < 10; i++) {
                 const row = document.getElementById(`prob-row-${i}`);
                 const pill = document.getElementById(`matrix-pill-${i}`);
-                document.getElementById(`prob-fill-${i}`).style.width = '0%';
-                document.getElementById(`matrix-fill-${i}`).style.width = '0%';
-                document.getElementById(`prob-pct-${i}`).textContent = '0.0%';
-                row.classList.remove('top');
-                pill.classList.remove('active');
+                const fill = document.getElementById(`prob-fill-${i}`);
+                const mFill = document.getElementById(`matrix-fill-${i}`);
+                const pct = document.getElementById(`prob-pct-${i}`);
+
+                if (fill) fill.style.width = '0%';
+                if (mFill) mFill.style.width = '0%';
+                if (pct) pct.textContent = '0.0%';
+                if (row) row.classList.remove('top');
+                if (pill) pill.classList.remove('active');
             }
             currentTopDigit = null;
             lastAnnouncedDigit = null;
@@ -1751,6 +1931,7 @@
         let historyCount = 0;
 
         function addHistoryItem(digit, confidence) {
+            if (!historyList) return;
             if (historyCount === 0) {
                 historyList.innerHTML = '';
             }
@@ -1782,7 +1963,7 @@
             }
         }
 
-        updateCanvasTheme();
+        initMainCanvas();
     </script>
 </body>
 </html>
