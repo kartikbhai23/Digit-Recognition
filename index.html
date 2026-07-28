@@ -293,11 +293,11 @@
             padding: 0;
             background: #000000;
             border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 18px;
+            border-radius: 14px;
             box-shadow: 0 20px 45px rgba(0, 0, 0, 0.8), 0 0 25px rgba(0, 0, 0, 0.6);
             overflow: hidden;
-            width: 320px;
-            height: 320px;
+            width: 380px;
+            height: 280px;
             transition: all 0.3s ease;
         }
 
@@ -317,7 +317,7 @@
             background-image: 
                 linear-gradient(to right, rgba(255, 255, 255, 0.12) 1px, transparent 1px),
                 linear-gradient(to bottom, rgba(255, 255, 255, 0.12) 1px, transparent 1px);
-            background-size: 11.428px 11.428px;
+            background-size: calc(100% / 28) calc(100% / 28);
             z-index: 2;
         }
 
@@ -336,14 +336,14 @@
         }
 
         #canvas {
-            border-radius: 18px;
+            border-radius: 14px;
             cursor: none;
             display: block;
             touch-action: none;
         }
 
         .btn-reset {
-            width: 320px;
+            width: 380px;
             padding: 13px 24px;
             background: linear-gradient(90deg, #38bdf8 0%, #00e5ff 100%);
             color: #ffffff;
@@ -995,7 +995,7 @@
                     <button class="btn-reset" id="resetBtn">Reset</button>
 
                     <!-- Single Inline Controls Row -->
-                    <div class="tools-bar" style="display: flex; align-items: center; justify-content: space-between; width: 320px; gap: 6px; margin-top: 10px; flex-wrap: nowrap;">
+                    <div class="tools-bar" style="display: flex; align-items: center; justify-content: space-between; width: 380px; gap: 6px; margin-top: 10px; flex-wrap: nowrap;">
                         <div class="brush-controls" style="padding: 4px 8px; font-size: 0.78rem; gap: 6px;">
                             <i class="fa-solid fa-paint-brush"></i>
                             <input type="range" id="brushSlider" class="brush-slider" min="12" max="36" value="22" style="width: 50px;">
